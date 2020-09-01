@@ -27,7 +27,8 @@ public class Main extends Application {
             map.getHeight() * Tiles.TILE_WIDTH);
     GraphicsContext context = canvas.getGraphicsContext2D();
     Label healthLabel = new Label();
-    Button getItem = new Button("Take item");
+    Label inventory = new Label();
+    Button getItemButton = new Button("Take item");
 
     public static void main(String[] args) {
         launch(args);
@@ -41,9 +42,10 @@ public class Main extends Application {
 
         ui.add(new Label("Health: "), 0, 0);
         ui.add(new Label("Inventory: "), 0, 1);
-        getItem.setVisible(false);
-        ui.add(getItem, 0, 2);
+        getItemButton.setVisible(false);
+        ui.add(getItemButton, 0, 3);
         ui.add(healthLabel, 1, 0);
+        ui.add(inventory, 0, 2);
 
         BorderPane borderPane = new BorderPane();
 
@@ -102,21 +104,31 @@ public class Main extends Application {
                 refresh();
                 break;
         }
+        checkCellForItem();
+        keyEvent.consume();
+    }
+
+    public void checkCellForItem(){
         if (map.getPlayer().getCell().getType().equals(CellType.SWORD) || map.getPlayer().getCell().getType().equals(CellType.KEY)){
-            getItem.setVisible(true);
-            getItem.setOnAction(event -> {
+            getItemButton.setVisible(true);
+            getItemButton.setOnAction(event -> {
                 try {
                     map.getPlayer().pickUp(map.getPlayer().getCell().getType().toString());
+                    // SHOW INVENTORY
+                    inventory.setText(map.getPlayer().getInventory().toString());
+                    // CHECK IF KEY IN INVENTORY
+                    if (map.getPlayer().getInventory().containsKey("KEY")){
+                        System.out.println("you got the key");
+                    }
                     map.getPlayer().getCell().setType(CellType.FLOOR);
-                    getItem.setVisible(false);
+                    getItemButton.setVisible(false);
                 } catch (Exception e){
                     System.out.println("Error");
                 }
             });
         } else {
-            getItem.setVisible(false);
+            getItemButton.setVisible(false);
         }
-        keyEvent.consume();
     }
 
     private void refresh() {
