@@ -8,6 +8,7 @@ import com.codecool.dungeoncrawl.util.Random;
 public abstract class Actor implements Drawable {
     private Cell cell;
     private int health = 10;
+    private int dmg = 2;
 
     public Actor(Cell cell) {
         this.cell = cell;
@@ -26,7 +27,17 @@ public abstract class Actor implements Drawable {
     }
 
     public void setHealth(int value) {
-        health += value;
+        health = value;
+    }
+
+    public void addHealth(int value) { health += value; };
+
+    public void setDmg(int v) {
+        dmg = v;
+    }
+
+    public int getDmg() {
+        return dmg;
     }
 
     public void subtractFromHealth(int value) {

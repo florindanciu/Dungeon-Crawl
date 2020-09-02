@@ -1,16 +1,21 @@
 package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
+import com.codecool.dungeoncrawl.util.HelloThread;
 
-public class Skeleton extends Actor {
-    public Skeleton(Cell cell) {
+public class Ghost extends Actor {
+
+    public Ghost(Cell cell) {
         super(cell);
-        super.setDmg(3);
+        super.setHealth(12);
+        super.setDmg(4);
+
+//        new HelloThread().start();
     }
 
     @Override
     public String getTileName() {
-        return "skeleton";
+        return "ghost";
     }
 
     @Override
@@ -21,5 +26,10 @@ public class Skeleton extends Actor {
     @Override
     public void setHealth(int value) {
         super.setHealth(value);
+    }
+
+    @Override
+    public void move(int dx, int dy) {
+        super.move(dx, dy);
     }
 }

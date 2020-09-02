@@ -1,7 +1,9 @@
 package com.codecool.dungeoncrawl.logic;
 
+import com.codecool.dungeoncrawl.logic.actors.Ghost;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.actors.Skeleton;
+import com.codecool.dungeoncrawl.logic.actors.Scorpion;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -23,7 +25,7 @@ public class MapLoader {
                     Cell cell = map.getCell(x, y);
                     switch (line.charAt(x)) {
                         case ' ':
-                            cell.setType(CellType.EMPTY);
+                            cell.setType(CellType.TREES);
                             break;
                         case '#':
                             cell.setType(CellType.WALL);
@@ -43,6 +45,26 @@ public class MapLoader {
                             break;
                         case 'z':
                             cell.setType(CellType.SWORD);
+                            break;
+                        case 'S':
+                            cell.setType(CellType.FLOOR);
+                            new Scorpion(cell);
+                            break;
+                        case 'h':
+                            cell.setType(CellType.HELMET);
+                            break;
+                        case 'r':
+                            cell.setType(CellType.RIVER);
+                            break;
+                        case 'c':
+                            cell.setType(CellType.RIVER_TO_RIGHT);
+                            break;
+                        case 'g':
+                            cell.setType(CellType.FLOOR);
+                            cell.setActor(new Ghost(cell));
+                            break;
+                        case 'w':
+                            cell.setType(CellType.WATER);
                             break;
                         case '@':
                             cell.setType(CellType.FLOOR);

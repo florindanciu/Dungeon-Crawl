@@ -2,6 +2,7 @@ package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.logic.*;
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.util.HelloThread;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -62,85 +63,28 @@ public class Main extends Application {
     private void onKeyPressed(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
             case UP:
-                if (!(map.getPlayer().getCell().getNeighbor(0,-1).getTileName().equals("wall"))){
-                    try {
-                        map.getPlayer().getCell().getNeighbor(0, -1).getActor().getTileName();
-                        combat.fight(map.getPlayer(),map.getPlayer().getCell().getNeighbor(0, -1).getActor());
-                        if (map.getPlayer().getCell().getNeighbor(0, -1).getActor().getHealth() <= 0){
-                            System.out.println("done");
-                            map.getPlayer().getCell().setType(CellType.FLOOR);
-                            map.getPlayer().move(0, -1);
-                        }
-                    } catch (Exception e){
-                        map.getPlayer().move(0, -1);
-                    }
-                }
+                map.getPlayer().checkCell(map, combat,0,-1);
                 refresh();
                 break;
             case DOWN:
-                if (!(map.getPlayer().getCell().getNeighbor(0,1).getTileName().equals("wall"))){
-                    try {
-                        map.getPlayer().getCell().getNeighbor(0, 1).getActor().getTileName();
-                    } catch (Exception e){
-                        map.getPlayer().move(0, 1);
-                    }
-                }
+                map.getPlayer().checkCell(map, combat,0,1);
                 refresh();
                 break;
             case LEFT:
-                if (!(map.getPlayer().getCell().getNeighbor(-1,0).getTileName().equals("wall"))){
-                    try {
-                        map.getPlayer().getCell().getNeighbor(-1, 0).getActor().getTileName();
-                    } catch (Exception e){
-                        map.getPlayer().move(-1, 0);
-                    }
-                }
+                map.getPlayer().checkCell(map, combat,-1,0);
                 refresh();
                 break;
             case RIGHT:
-                if (!(map.getPlayer().getCell().getNeighbor(1,0).getTileName().equals("wall"))){
-                    try {
-                        map.getPlayer().getCell().getNeighbor(1, 0).getActor().getTileName();
-                    } catch (Exception e){
-                        map.getPlayer().move(1, 0);
-                    }
-                }
+                map.getPlayer().checkCell(map, combat,1,0);
                 refresh();
                 break;
         }
-        checkCellForItem();
+        // FIX BUG
+        map.getPlayer().checkCellForItem(map, getItemButton, inventory);
+        refresh();
+        map.getPlayer().openDoor(map);
+        refresh();
         keyEvent.consume();
-    }
-
-    public void checkCellForItem(){
-        if (map.getPlayer().getCell().getType().equals(CellType.SWORD) || map.getPlayer().getCell().getType().equals(CellType.KEY)){
-            getItemButton.setVisible(true);
-            getItemButton.setOnAction(event -> {
-                try {
-                    map.getPlayer().pickUp(map.getPlayer().getCell().getType().toString());
-                    // SHOW INVENTORY
-                    inventory.setText(map.getPlayer().getInventory().toString());
-                    // CHECK IF KEY IN INVENTORY
-                    if (map.getPlayer().getInventory().containsKey("KEY")){
-                        System.out.println("you got the key");
-                        openDoor();
-                    }
-                    map.getPlayer().getCell().setType(CellType.FLOOR);
-                    getItemButton.setVisible(false);
-                } catch (Exception e){
-                    System.out.println("Error");
-                }
-            });
-        } else {
-            getItemButton.setVisible(false);
-        }
-    }
-
-    public void openDoor(){
-        if (map.getPlayer().getInventory().containsKey("KEY")) {
-            map.getCell(20, 19).setType(CellType.OPENED_DOOR);
-            System.out.println("The door is open now");
-        }
     }
 
     private void refresh() {
@@ -158,4 +102,5 @@ public class Main extends Application {
         }
         healthLabel.setText("" + map.getPlayer().getHealth());
     }
+
 }

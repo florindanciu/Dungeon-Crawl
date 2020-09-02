@@ -10,13 +10,17 @@ public class Combat {
     public void fight(Player player, Actor enemy){
         if (player.checkIfAlive(player) && enemy.checkIfAlive(enemy)){
             if (player.getInventory().containsKey("SWORD")){
-                player.attack(enemy,5,10);
+                player.setDmg(15);
+                player.attack(enemy,5,player.getDmg());
                 System.out.println("BIG DMG");
+                System.out.println("Monster health" + " " + enemy.getHealth());
             } else {
-                player.attack(enemy,0,10);
+                player.attack(enemy,0,5);
                 System.out.println("small dmg");
+                System.out.println("Monster health" + " " + enemy.getHealth());
             }
-            enemy.attack(player,0,5);
+            enemy.attack(player,0,enemy.getDmg());
+            System.out.println("Player health" + " " + player.getHealth());
         }
         if (!player.checkIfAlive(player)){
             System.out.println("GAME OVER!");
