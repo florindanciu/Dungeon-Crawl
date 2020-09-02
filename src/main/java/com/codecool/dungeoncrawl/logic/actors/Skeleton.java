@@ -11,4 +11,14 @@ public class Skeleton extends Actor {
     public String getTileName() {
         return "skeleton";
     }
+
+    @Override
+    public int getHealth() {
+        return super.getHealth();
+    }
+
+    @Override
+    public void setHealth(int value) {
+        super.setHealth(value);
+    }
 }

@@ -1,9 +1,6 @@
 package com.codecool.dungeoncrawl;
 
-import com.codecool.dungeoncrawl.logic.Cell;
-import com.codecool.dungeoncrawl.logic.CellType;
-import com.codecool.dungeoncrawl.logic.GameMap;
-import com.codecool.dungeoncrawl.logic.MapLoader;
+import com.codecool.dungeoncrawl.logic.*;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -26,6 +23,7 @@ public class Main extends Application {
             map.getWidth() * Tiles.TILE_WIDTH,
             map.getHeight() * Tiles.TILE_WIDTH);
     GraphicsContext context = canvas.getGraphicsContext2D();
+    Combat combat = new Combat();
     Label healthLabel = new Label();
     Label inventory = new Label();
     Button getItemButton = new Button("Take item");
@@ -67,6 +65,12 @@ public class Main extends Application {
                 if (!(map.getPlayer().getCell().getNeighbor(0,-1).getTileName().equals("wall"))){
                     try {
                         map.getPlayer().getCell().getNeighbor(0, -1).getActor().getTileName();
+                        combat.fight(map.getPlayer(),map.getPlayer().getCell().getNeighbor(0, -1).getActor());
+                        if (map.getPlayer().getCell().getNeighbor(0, -1).getActor().getHealth() <= 0){
+                            System.out.println("done");
+                            map.getPlayer().getCell().setType(CellType.FLOOR);
+                            map.getPlayer().move(0, -1);
+                        }
                     } catch (Exception e){
                         map.getPlayer().move(0, -1);
                     }

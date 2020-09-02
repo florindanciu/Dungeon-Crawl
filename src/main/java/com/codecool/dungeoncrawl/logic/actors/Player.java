@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 
 public class Player extends Actor {
-    HashMap<String,Integer> inventory = new HashMap<>();
+    public HashMap<String,Integer> inventory = new HashMap<>();
 
     public Player(Cell cell) {
         super(cell);
@@ -31,4 +31,13 @@ public class Player extends Actor {
         return inventory;
     }
 
+    @Override
+    public int getHealth() {
+        return super.getHealth();
+    }
+
+    @Override
+    public void setHealth(int value) {
+        super.setHealth(value);
+    }
 }

@@ -2,6 +2,8 @@ package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.Drawable;
+import com.sun.javafx.util.Utils;
+import com.codecool.dungeoncrawl.util.Random;
 
 public abstract class Actor implements Drawable {
     private Cell cell;
@@ -23,6 +25,14 @@ public abstract class Actor implements Drawable {
         return health;
     }
 
+    public void setHealth(int value) {
+        health += value;
+    }
+
+    public void subtractFromHealth(int value) {
+        this.health -= value;
+    }
+
     public Cell getCell() {
         return cell;
     }
@@ -33,5 +43,13 @@ public abstract class Actor implements Drawable {
 
     public int getY() {
         return cell.getY();
+    }
+
+    public void attack(Actor enemy, int min, int max){
+        enemy.subtractFromHealth(Random.getNumberBetween(min,max));
+    }
+
+    public boolean checkIfAlive(Actor actor) {
+        return actor.health > 0;
     }
 }
