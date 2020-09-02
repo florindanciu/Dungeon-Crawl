@@ -119,6 +119,7 @@ public class Main extends Application {
                     // CHECK IF KEY IN INVENTORY
                     if (map.getPlayer().getInventory().containsKey("KEY")){
                         System.out.println("you got the key");
+                        openDoor();
                     }
                     map.getPlayer().getCell().setType(CellType.FLOOR);
                     getItemButton.setVisible(false);
@@ -128,6 +129,13 @@ public class Main extends Application {
             });
         } else {
             getItemButton.setVisible(false);
+        }
+    }
+
+    public void openDoor(){
+        if (map.getPlayer().getInventory().containsKey("KEY")) {
+            map.getCell(20, 19).setType(CellType.OPENED_DOOR);
+            System.out.println("The door is open now");
         }
     }
 
