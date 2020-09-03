@@ -59,6 +59,12 @@ public class MapLoader {
                         case 'k':
                             cell.setType(CellType.KEY);
                             break;
+                        case '*':
+                            cell.setType(CellType.KEY_2);
+                            break;
+                        case '&':
+                            cell.setType(CellType.KEY_3);
+                            break;
                         case 'z':
                             cell.setType(CellType.SWORD);
                             break;
@@ -68,6 +74,9 @@ public class MapLoader {
                             break;
                         case 'h':
                             cell.setType(CellType.HELMET);
+                            break;
+                        case 'C':
+                            cell.setType(CellType.CHEST);
                             break;
                         case 'r':
                             cell.setType(CellType.RIVER);

@@ -12,7 +12,7 @@ public class Combat {
         if (player.checkIfAlive(player) && enemy.checkIfAlive(enemy)){
             if (player.getInventory().containsKey("SWORD")){
                 player.setDmg(15);
-                player.attack(enemy,5,player.getDmg());
+                player.attack(enemy,8,player.getDmg());
                 System.out.println("BIG DMG");
                 System.out.println("Monster health" + " " + enemy.getHealth());
             } else {

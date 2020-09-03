@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Player extends Actor {
     public HashMap<String,Integer> inventory = new HashMap<>();
@@ -34,17 +36,25 @@ public class Player extends Actor {
         return inventory;
     }
 
-    public void openDoor(GameMap map, int x, int y, CellType door){
-        if (map.getPlayer().getInventory().containsKey("KEY")) {
+    public void clearInventory() {
+        inventory.entrySet().removeAll(inventory.entrySet());
+    }
+
+    public void removeItem(String item) {
+        inventory.remove(item);
+    }
+
+    public void openDoor(GameMap map, int x, int y, CellType door, String key){
+        if (map.getPlayer().getInventory().containsKey(key)) {
             map.getCell(x, y).setType(door);
         }
     }
 
-    public void setArmor(GameMap map, String item) {
+    public void setArmor(GameMap map, String item, int x, int y, int value) {
         if (map.getPlayer().getInventory().containsKey(item)) {
             map.getPlayer().getCell().setType(CellType.FLOOR);
-            map.getPlayer().addHealth(5);
-            Tiles.changePlayerLook(28,0);
+            map.getPlayer().addHealth(value);
+            Tiles.changePlayerLook(x,y);
             System.out.println("You took a helmet");
         }
     }
@@ -52,18 +62,29 @@ public class Player extends Actor {
     public void checkCellForItem(GameMap map, Button getItemButton, Label inventory){
         if (map.getPlayer().getCell().getType().equals(CellType.SWORD) ||
                 map.getPlayer().getCell().getType().equals(CellType.KEY) ||
-                map.getPlayer().getCell().getType().equals(CellType.HELMET)){
+                map.getPlayer().getCell().getType().equals(CellType.HELMET) ||
+                map.getPlayer().getCell().getType().equals(CellType.CHEST) ||
+                map.getPlayer().getCell().getType().equals(CellType.KEY_2) ||
+                map.getPlayer().getCell().getType().equals(CellType.KEY_3)){
 
             getItemButton.setVisible(true);
             getItemButton.setOnAction(event -> {
                 try {
                     map.getPlayer().pickUp(map.getPlayer().getCell().getType().toString());
                     if (map.getPlayer().getInventory().containsKey("HELMET")){
-                        setArmor(map, "HELMET");
+                        setArmor(map, "HELMET", 28, 0, 10);
                     } else if (map.getPlayer().getInventory().containsKey("SWORD")){
                         Tiles.changePlayerLook(27,0);
+                    } else if (map.getPlayer().getInventory().containsKey("CHEST")){
+                        setArmor(map, "CHEST", 31, 0, 25);
                     }
-                    inventory.setText(map.getPlayer().getInventory().toString());
+//                    Iterator it = getInventory().entrySet().iterator();
+//                    while (it.hasNext()) {
+//                        Map.Entry pair = (Map.Entry)it.next();
+//                        inventory.setText(inventory.getText() + pair.getKey() + " " + pair.getValue() + "\n");
+//                        it.remove(); // avoids a ConcurrentModificationException
+//                    }
+                    inventory.setText(getInventory().toString());
                     map.getPlayer().getCell().setType(CellType.FLOOR);
                     getItemButton.setVisible(false);
                 } catch (Exception e){
@@ -79,11 +100,12 @@ public class Player extends Actor {
         if (isAdmin()){
             checkMove(map, combat, x, y);
         } else {
-            if (!(map.getPlayer().getCell().getNeighbor(x,y).getTileName().equals("wall"))){
+            if (!(map.getPlayer().getCell().getNeighbor(x,y).getTileName().equals("wall")) &&
+                    !(map.getPlayer().getCell().getNeighbor(x,y).getTileName().contains("closed"))){
                 if(this.checkIfAlive(this)){
                     checkMove(map, combat, x, y);
                 } else {
-                    PopUp.display("YOU LOST", "GAME OVER!");
+                    PopUp.display("YOU LOST", "GAME OVER!", "Red");
                 }
 
             }
@@ -109,7 +131,7 @@ public class Player extends Actor {
     private void checkMove(GameMap map, Combat combat, int x, int y) {
         try {
             if (map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName().equals("ghost")){
-                PopUp.display("YOU LOST", "GAME OVER!");
+                this.setHealth(0);
             }
             map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName();
             combat.fight(map.getPlayer(),map.getPlayer().getCell().getNeighbor(x, y).getActor());

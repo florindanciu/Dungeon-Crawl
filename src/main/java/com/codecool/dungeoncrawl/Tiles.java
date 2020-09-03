@@ -41,9 +41,12 @@ public class Tiles {
         tileMap.put("closed_door3", new Tile(5, 9));
         tileMap.put("opened_door3", new Tile(6, 9));
         tileMap.put("key", new Tile(16, 23));
+        tileMap.put("key2", new Tile(17, 23));
+        tileMap.put("key3", new Tile(18, 23));
         tileMap.put("sword", new Tile(0, 29));
         tileMap.put("scorpion", new Tile(24, 5));
         tileMap.put("helmet", new Tile(3, 22));
+        tileMap.put("chest", new Tile(3, 23));
         tileMap.put("rail", new Tile(21, 1));
         tileMap.put("bridge", new Tile(7, 5));
         tileMap.put("dried_trees", new Tile(6, 0));

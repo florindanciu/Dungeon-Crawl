@@ -1,8 +1,8 @@
 30 25
 ##############################
-#........2...........S......k#
+#........2..C........S......&#
 #........###############l#####
-#.....z..#wwwwwwwwwwwwwwlwwwww
+#........#wwwwwwwwwwwwwwlwwwww
 #.....####wwwwwwwwwwwwwwlwwwww
 #..s..#oooro############l#wwww
 #.....#oooro#............#wwww
@@ -16,7 +16,7 @@ ooolooooooroooooooo#.........#
 #...........#oooooo#####l#####
 #....@......#ooooooooooolwwwww
 #...........#ooooooooooolwwwww
-#.........k.#ooooooooooolwwwww
+#.........*.#ooooooooooolwwwww
 #############oooo#######l#####
 3...........#oooo#...........#
 #...........#oooo#...........#

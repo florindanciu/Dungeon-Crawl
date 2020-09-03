@@ -16,7 +16,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 public class PopUp {
 
-    public static void display(String title, String message) {
+    public static void display(String title, String message, String color) {
         Stage window = new Stage();
 
         window.initModality(Modality.WINDOW_MODAL);
@@ -30,7 +30,7 @@ public class PopUp {
         VBox layout = new VBox();
         layout.getChildren().addAll(label);
         label.setAlignment(Pos.CENTER);
-        label.setTextFill(Paint.valueOf("red"));
+        label.setTextFill(Paint.valueOf(color));
         label.setMinHeight(50);
         label.setMinWidth(100);
         label.setFont(new Font(50.0));
