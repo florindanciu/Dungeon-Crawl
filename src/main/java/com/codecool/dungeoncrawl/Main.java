@@ -1,8 +1,8 @@
 package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.logic.*;
-import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.util.HelloThread;
+import com.codecool.dungeoncrawl.util.Input;
+import com.codecool.dungeoncrawl.util.PopUp;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -10,13 +10,12 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import java.util.HashMap;
 
 public class Main extends Application {
     GameMap map = MapLoader.loadMap();
@@ -27,7 +26,10 @@ public class Main extends Application {
     Combat combat = new Combat();
     Label healthLabel = new Label();
     Label inventory = new Label();
+    Label playerName = new Label();
+    TextField textField = new TextField();
     Button getItemButton = new Button("Take item");
+    boolean gameOver = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -35,16 +37,23 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        map.getPlayer().setName(Input.getInput());
+
         GridPane ui = new GridPane();
         ui.setPrefWidth(200);
         ui.setPadding(new Insets(10));
 
         ui.add(new Label("Health: "), 0, 0);
         ui.add(new Label("Inventory: "), 0, 1);
+        ui.add(new Label("Player name: "), 0, 4);
+
         getItemButton.setVisible(false);
+
         ui.add(getItemButton, 0, 3);
         ui.add(healthLabel, 1, 0);
         ui.add(inventory, 0, 2);
+        ui.add(playerName, 2, 4);
+        ui.add(textField, 0, 6);
 
         BorderPane borderPane = new BorderPane();
 
@@ -58,6 +67,20 @@ public class Main extends Application {
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
+
+        new Thread(this::permanentRefresh).start();
+    }
+
+    public void permanentRefresh(){
+        while (true){
+            try {
+                System.out.println("refresh");
+                refresh();
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
@@ -87,7 +110,10 @@ public class Main extends Application {
         keyEvent.consume();
     }
 
-    private void refresh() {
+    public void refresh() {
+        if (!(map.getPlayer().checkIfAlive(map.getPlayer()))){
+            gameOver = true;
+        }
         context.setFill(Color.BLACK);
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         for (int x = 0; x < map.getWidth(); x++) {

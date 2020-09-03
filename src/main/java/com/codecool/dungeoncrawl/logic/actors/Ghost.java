@@ -1,7 +1,9 @@
 package com.codecool.dungeoncrawl.logic.actors;
 
+import com.codecool.dungeoncrawl.Main;
 import com.codecool.dungeoncrawl.logic.Cell;
-import com.codecool.dungeoncrawl.util.HelloThread;
+import com.codecool.dungeoncrawl.logic.GameMap;
+import com.codecool.dungeoncrawl.util.AiMove;
 
 public class Ghost extends Actor {
 
@@ -10,7 +12,7 @@ public class Ghost extends Actor {
         super.setHealth(12);
         super.setDmg(4);
 
-//        new HelloThread().start();
+        new AiMove(this).start();
     }
 
     @Override

@@ -1,7 +1,10 @@
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/actors/Player.java
+/home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/util/AiMove.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/Tiles.java
+/home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/util/Input.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/Cell.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/Main.java
+/home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/actors/Ghost.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/actors/Scorpion.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/actors/Skeleton.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/MapLoader.java

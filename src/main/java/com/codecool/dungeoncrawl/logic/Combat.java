@@ -1,5 +1,6 @@
 package com.codecool.dungeoncrawl.logic;
 
+import com.codecool.dungeoncrawl.App;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.actors.Skeleton;
@@ -21,9 +22,6 @@ public class Combat {
             }
             enemy.attack(player,0,enemy.getDmg());
             System.out.println("Player health" + " " + player.getHealth());
-        }
-        if (!player.checkIfAlive(player)){
-            System.out.println("GAME OVER!");
         }
     }
 

@@ -9,7 +9,6 @@ public class GameMap {
     private Cell[][] cells;
 
     private Player player;
-    private Actor actor;
 
     public GameMap(int width, int height, CellType defaultCellType) {
         this.width = width;
@@ -29,12 +28,6 @@ public class GameMap {
     public void setPlayer(Player player) {
         this.player = player;
     }
-
-//    public void setActor(Actor actor) { this.actor = actor; }
-//
-//    public Actor getActor() {
-//        return actor;
-//    }
 
     public Player getPlayer() {
         return player;
