@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 
 public class Main extends Application {
-    GameMap map = MapLoader.loadMap();
+    GameMap map = MapLoader.loadMap("/level1.txt");
     Canvas canvas = new Canvas(
             map.getWidth() * Tiles.TILE_WIDTH,
             map.getHeight() * Tiles.TILE_WIDTH);
@@ -85,6 +85,17 @@ public class Main extends Application {
         map.getPlayer().openDoor(map);
         refresh();
         keyEvent.consume();
+        nextLevel();
+//        refresh();
+    }
+
+    public void nextLevel() {
+        if (map.getPlayer().getCell().getX() == 20 && map.getPlayer().getCell().getY() == 18){
+            if (map.getCell(20, 19).getType().equals(CellType.OPENED_DOOR)) {
+                map = MapLoader.loadMap("/level2.txt");
+                refresh();
+            }
+        }
     }
 
     private void refresh() {

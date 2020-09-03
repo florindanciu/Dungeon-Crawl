@@ -12,8 +12,12 @@ public enum CellType {
     GHOST("ghost"),
     HELMET("helmet"),
     RIVER("river"),
+    RIVER_END("riverEnd"),
     RIVER_TO_RIGHT("riverToRight"),
     TREES("trees"),
+    DRIED_TREES("dried_trees"),
+    BRIDGE("bridge"),
+    RAIL("rail"),
     WATER("water");
 
     private final String tileName;
