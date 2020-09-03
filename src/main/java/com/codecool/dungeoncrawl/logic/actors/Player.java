@@ -2,6 +2,7 @@ package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.Tiles;
 import com.codecool.dungeoncrawl.logic.*;
+import com.codecool.dungeoncrawl.util.Notification;
 import com.codecool.dungeoncrawl.util.PopUp;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -55,7 +56,6 @@ public class Player extends Actor {
             map.getPlayer().getCell().setType(CellType.FLOOR);
             map.getPlayer().addHealth(value);
             Tiles.changePlayerLook(x,y);
-            System.out.println("You took a helmet");
         }
     }
 
@@ -73,10 +73,13 @@ public class Player extends Actor {
                     map.getPlayer().pickUp(map.getPlayer().getCell().getType().toString());
                     if (map.getPlayer().getInventory().containsKey("HELMET")){
                         setArmor(map, "HELMET", 28, 0, 10);
+                        getInventory().remove("HELMET");
                     } else if (map.getPlayer().getInventory().containsKey("SWORD")){
+                        this.setDmg(15);
                         Tiles.changePlayerLook(27,0);
                     } else if (map.getPlayer().getInventory().containsKey("CHEST")){
                         setArmor(map, "CHEST", 31, 0, 25);
+                        getInventory().remove("CHEST");
                     }
 //                    Iterator it = getInventory().entrySet().iterator();
 //                    while (it.hasNext()) {
@@ -96,14 +99,14 @@ public class Player extends Actor {
         }
     }
 
-    public void checkCell(GameMap map, Combat combat, int x, int y) {
+    public void checkCell(GameMap map, Combat combat, int x, int y, Label label) {
         if (isAdmin()){
-            checkMove(map, combat, x, y);
+            checkMove(map, combat, x, y, label);
         } else {
             if (!(map.getPlayer().getCell().getNeighbor(x,y).getTileName().equals("wall")) &&
                     !(map.getPlayer().getCell().getNeighbor(x,y).getTileName().contains("closed"))){
                 if(this.checkIfAlive(this)){
-                    checkMove(map, combat, x, y);
+                    checkMove(map, combat, x, y, label);
                 } else {
                     PopUp.display("YOU LOST", "GAME OVER!", "Red");
                 }
@@ -128,13 +131,13 @@ public class Player extends Actor {
         }
     }
 
-    private void checkMove(GameMap map, Combat combat, int x, int y) {
+    private void checkMove(GameMap map, Combat combat, int x, int y, Label label) {
         try {
             if (map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName().equals("ghost")){
                 this.setHealth(0);
             }
             map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName();
-            combat.fight(map.getPlayer(),map.getPlayer().getCell().getNeighbor(x, y).getActor());
+            combat.fight(map.getPlayer(),map.getPlayer().getCell().getNeighbor(x, y).getActor(), label);
             if (map.getPlayer().getCell().getNeighbor(x, y).getActor().getHealth() <= 0){
                 map.getPlayer().getCell().setType(CellType.FLOOR);
                 map.getPlayer().move(x, y);

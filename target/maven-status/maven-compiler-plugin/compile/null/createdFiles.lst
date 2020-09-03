@@ -7,6 +7,7 @@ com/codecool/dungeoncrawl/logic/actors/Scorpion.class
 com/codecool/dungeoncrawl/App.class
 com/codecool/dungeoncrawl/logic/actors/Ghost.class
 com/codecool/dungeoncrawl/logic/actors/Actor.class
+com/codecool/dungeoncrawl/util/PopUp.class
 com/codecool/dungeoncrawl/util/AiMove.class
 com/codecool/dungeoncrawl/logic/CellType.class
 com/codecool/dungeoncrawl/Main$1.class
@@ -17,3 +18,4 @@ com/codecool/dungeoncrawl/util/Input.class
 com/codecool/dungeoncrawl/logic/Cell.class
 com/codecool/dungeoncrawl/Tiles$Tile.class
 com/codecool/dungeoncrawl/logic/Combat.class
+com/codecool/dungeoncrawl/util/Notification.class

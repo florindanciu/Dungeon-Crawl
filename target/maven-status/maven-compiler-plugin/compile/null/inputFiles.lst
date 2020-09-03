@@ -8,6 +8,7 @@
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/actors/Scorpion.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/actors/Skeleton.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/MapLoader.java
+/home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/util/Notification.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/actors/Actor.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/GameMap.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/util/Random.java
@@ -15,3 +16,4 @@
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/App.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/CellType.java
 /home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/logic/Drawable.java
+/home/gabi/Desktop/Projects/CodeCool_Projects/Team_Projects/OOP/dungeon-crawl-1-java-VGabriel45/src/main/java/com/codecool/dungeoncrawl/util/PopUp.java

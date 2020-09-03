@@ -28,6 +28,7 @@ public class Main extends Application {
     GraphicsContext context = canvas.getGraphicsContext2D();
     Combat combat = new Combat();
     Label healthLabel = new Label();
+    Label monsterHp = new Label();
     Label inventory = new Label();
     Label playerName = new Label();
     TextField textField = new TextField();
@@ -46,7 +47,6 @@ public class Main extends Application {
         map.getPlayer().setHealth(10);
         new Notification(map);
         textField.setOnAction(event -> map.getPlayer().setName(textField.getText()));
-//        map.getPlayer().setName(Input.getInput());
         this.primaryStage = primaryStage;
 
         GridPane ui = new GridPane();
@@ -56,6 +56,7 @@ public class Main extends Application {
         ui.add(new Label("Health: "), 0, 0);
         ui.add(new Label("Inventory: "), 0, 3);
         ui.add(new Label("Player name: " + map.getPlayer().getName()), 0, 5);
+        ui.add(new Label("Monster health: "), 0, 6);
 
         getItemButton.setVisible(false);
 
@@ -63,6 +64,7 @@ public class Main extends Application {
         ui.add(healthLabel, 0, 2);
         ui.add(inventory, 0, 4);
         ui.add(playerName, 2, 5);
+        ui.add(monsterHp, 2, 6);
 
         borderPane = new BorderPane();
 
@@ -85,7 +87,7 @@ public class Main extends Application {
         while (true){
             try {
                 refresh();
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -95,39 +97,39 @@ public class Main extends Application {
     private void onKeyPressed(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
             case UP:
-                map.getPlayer().checkCell(map, combat,0,-1);
+                map.getPlayer().checkCell(map, combat,0,-1, monsterHp);
                 refresh();
                 break;
             case DOWN:
-                map.getPlayer().checkCell(map, combat,0,1);
+                map.getPlayer().checkCell(map, combat,0,1, monsterHp);
                 refresh();
                 break;
             case LEFT:
-                map.getPlayer().checkCell(map, combat,-1,0);
+                map.getPlayer().checkCell(map, combat,-1,0,monsterHp);
                 refresh();
                 break;
             case RIGHT:
-                map.getPlayer().checkCell(map, combat,1,0);
+                map.getPlayer().checkCell(map, combat,1,0,monsterHp);
                 refresh();
                 break;
         }
-        // FIX BUG
         map.getPlayer().checkCellForItem(map, getItemButton, inventory);
-        refresh();
-        refresh();
         keyEvent.consume();
         nextLevel("/level2.txt");
 
         if (map.getPlayer().getInventory().containsKey("KEY") && levelNumber.equals("1")){
+            PopUp.display("Good job!","DOOR 1 OPENED !", "Green");
             map.getPlayer().openDoor(map, 20, 19, CellType.OPENED_DOOR1, "KEY");
             map.getPlayer().removeItem("KEY");
             System.out.println(levelNumber);
         } else if (map.getPlayer().getInventory().containsKey("KEY_2") && levelNumber.equals("2")){
+            PopUp.display("Good job!","DOOR 2 OPENED !", "Green");
             map.getPlayer().openDoor(map, 9, 1, CellType.OPENED_DOOR2, "KEY_2");
             map.getPlayer().removeItem("KEY_2");
             System.out.println(map.getPlayer().getInventory());
             System.out.println(levelNumber);
         } else if (map.getPlayer().getInventory().containsKey("KEY_3") && levelNumber.equals("2")){
+            PopUp.display("Good job!","DOOR 3 OPENED !", "Green");
             map.getPlayer().openDoor(map, 0, 19, CellType.OPENED_DOOR3, "KEY_3");
             map.getPlayer().removeItem("KEY_3");
             System.out.println(map.getPlayer().getInventory());
@@ -172,8 +174,6 @@ public class Main extends Application {
                 primaryStage.sizeToScene();
                 context = canvas.getGraphicsContext2D();
                 refresh();
-                System.out.println(map.getWidth());
-                System.out.println(map.getHeight());
                 levelNumber = "2";
             }
         }
@@ -183,7 +183,6 @@ public class Main extends Application {
         if (!(map.getPlayer().checkIfAlive(map.getPlayer()))){
             levelNumber = "1";
             PopUp.display("YOU LOST", "GAME OVER!", "Red");
-            gameOver = true;
             map = MapLoader.loadMap("/level1.txt");
             canvas = new Canvas(
                     map.getWidth() * Tiles.TILE_WIDTH,
@@ -196,7 +195,6 @@ public class Main extends Application {
             inventory.setText("");
             Tiles.changePlayerLook(25,0);
             refresh();
-            gameOver = false;
         }
         gameEnd();
         context.setFill(Color.BLACK);
