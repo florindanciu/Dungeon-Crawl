@@ -3,6 +3,7 @@ package com.codecool.dungeoncrawl;
 import com.codecool.dungeoncrawl.logic.*;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.util.HelloThread;
+import com.codecool.dungeoncrawl.util.Notification;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -19,6 +20,7 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 
 public class Main extends Application {
+    Notification notification = new Notification();
     GameMap map = MapLoader.loadMap("/level1.txt");
     Canvas canvas = new Canvas(
             map.getWidth() * Tiles.TILE_WIDTH,
@@ -94,6 +96,7 @@ public class Main extends Application {
             if (map.getCell(20, 19).getType().equals(CellType.OPENED_DOOR)) {
                 map = MapLoader.loadMap("/level2.txt");
                 refresh();
+                notification.Notification("Level 2 now");
             }
         }
     }
