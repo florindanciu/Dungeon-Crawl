@@ -30,7 +30,9 @@ public class AiMove extends Thread {
             int x = Random.getNumberBetween(-1, 2);
             int y = Random.getNumberBetween(-1, 2);
             if (!(actor.getCell().getNeighbor(x,y).getTileName().equals("wall")) && !(actor.getCell().getNeighbor(x,y).getTileName().contains("door"))){
-                actor.move(x, y);
+                if (!(actor.getCell().getNeighbor(x,y).getTileName().equals("bridge"))){
+                    actor.move(x, y);
+                }
             }
         }
     }
