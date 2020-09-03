@@ -34,10 +34,9 @@ public class Player extends Actor {
         return inventory;
     }
 
-    public void openDoor(GameMap map){
+    public void openDoor(GameMap map, int x, int y, CellType door){
         if (map.getPlayer().getInventory().containsKey("KEY")) {
-            map.getCell(20, 19).setType(CellType.OPENED_DOOR);
-            System.out.println("The door is open now");
+            map.getCell(x, y).setType(door);
         }
     }
 
@@ -109,6 +108,9 @@ public class Player extends Actor {
 
     private void checkMove(GameMap map, Combat combat, int x, int y) {
         try {
+            if (map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName().equals("ghost")){
+                PopUp.display("YOU LOST", "GAME OVER!");
+            }
             map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName();
             combat.fight(map.getPlayer(),map.getPlayer().getCell().getNeighbor(x, y).getActor());
             if (map.getPlayer().getCell().getNeighbor(x, y).getActor().getHealth() <= 0){
