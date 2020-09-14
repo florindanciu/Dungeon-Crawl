@@ -1,6 +1,9 @@
 package com.codecool.dungeoncrawl;
 
+import com.codecool.dungeoncrawl.dao.PlayerDaoJdbc;
 import com.codecool.dungeoncrawl.logic.*;
+import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.PlayerModel;
 import com.codecool.dungeoncrawl.util.Input;
 import com.codecool.dungeoncrawl.util.Notification;
 
@@ -28,6 +31,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.sql.Date;
 import java.sql.SQLException;
 
 public class Main extends Application {
@@ -89,8 +93,8 @@ public class Main extends Application {
         refresh();
         scene.addEventFilter(KeyEvent.KEY_PRESSED,this::onKeyPressed);
 
-        scene.setOnKeyPressed(this::onKeyPressed);
-        scene.setOnKeyReleased(this::onKeyReleased);
+//        scene.setOnKeyPressed(this::onKeyPressed);
+//        scene.setOnKeyReleased(this::onKeyReleased);
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
@@ -201,8 +205,17 @@ public class Main extends Application {
                 context = canvas.getGraphicsContext2D();
                 refresh();
                 levelNumber = "2";
+                saveInDb();
             }
         }
+    }
+
+    public void saveInDb(){
+        Date date = new Date(2020,10,10);
+        PlayerModel playerModel = new PlayerModel(map.getPlayer().getName(), map.getPlayer().getX(),map.getPlayer().getY());
+        GameState gameState = new GameState("Map 1", date, playerModel);
+        GameDatabaseManager gameDatabaseManager = new GameDatabaseManager();
+        gameDatabaseManager.savePlayer(map.getPlayer());
     }
 
     public void refresh() {
