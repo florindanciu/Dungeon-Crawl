@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import java.sql.SQLException;
 
 public class Main extends Application {
+    GameDatabaseManager dbManager;
     Notification notification;
     GameMap map = MapLoader.loadMap("/level1.txt");
     Canvas canvas = new Canvas(
@@ -55,6 +56,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        setupDbManager();
         map.getPlayer().setHealth(10);
         new Notification(map);
         textField.setOnAction(event -> map.getPlayer().setName(textField.getText()));
@@ -102,7 +104,8 @@ public class Main extends Application {
                 || keyEvent.getCode() == KeyCode.ESCAPE) {
             exit();
 
-        new Thread(this::permanentRefresh).start();
+            new Thread(this::permanentRefresh).start();
+        }
 
     }
 
@@ -203,37 +206,37 @@ public class Main extends Application {
     }
 
     public void refresh() {
-        if (!(map.getPlayer().checkIfAlive(map.getPlayer()))){
-            levelNumber = "1";
-            PopUp.display("YOU LOST", "GAME OVER!", "Red");
-            map = MapLoader.loadMap("/level1.txt");
-            canvas = new Canvas(
-                    map.getWidth() * Tiles.TILE_WIDTH,
-                    map.getHeight() * Tiles.TILE_WIDTH);
-            borderPane.setCenter(canvas);
-            primaryStage.sizeToScene();
-            context = canvas.getGraphicsContext2D();
-            map.getPlayer().setHealth(10);
-            map.getPlayer().setName(textField.getText());
-            inventory.setText("");
-            Tiles.changePlayerLook(25,0);
-            refresh();
-        }
-        gameEnd();
-        context.setFill(Color.BLACK);
-        context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        for (int x = 0; x < map.getWidth(); x++) {
-            for (int y = 0; y < map.getHeight(); y++) {
-                Cell cell = map.getCell(x, y);
-                if (cell.getActor() != null) {
-                    Tiles.drawTile(context, cell.getActor(), x, y);
-                }else {
-                    Tiles.drawTile(context, cell, x, y);
+            if (!(map.getPlayer().checkIfAlive(map.getPlayer()))) {
+                levelNumber = "1";
+                PopUp.display("YOU LOST", "GAME OVER!", "Red");
+                map = MapLoader.loadMap("/level1.txt");
+                canvas = new Canvas(
+                        map.getWidth() * Tiles.TILE_WIDTH,
+                        map.getHeight() * Tiles.TILE_WIDTH);
+                borderPane.setCenter(canvas);
+                primaryStage.sizeToScene();
+                context = canvas.getGraphicsContext2D();
+                map.getPlayer().setHealth(10);
+                map.getPlayer().setName(textField.getText());
+                inventory.setText("");
+                Tiles.changePlayerLook(25, 0);
+                refresh();
+                gameEnd();
+                context.setFill(Color.BLACK);
+                context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                for (int x = 0; x < map.getWidth(); x++) {
+                    for (int y = 0; y < map.getHeight(); y++) {
+                        Cell cell = map.getCell(x, y);
+                        if (cell.getActor() != null) {
+                            Tiles.drawTile(context, cell.getActor(), x, y);
+                        } else {
+                            Tiles.drawTile(context, cell, x, y);
+                        }
+                    }
                 }
+                healthLabel.setText(" " + map.getPlayer().getHealth());
             }
         }
-        healthLabel.setText(" " + map.getPlayer().getHealth());
-    }
 
     private void setupDbManager() {
         dbManager = new GameDatabaseManager();
