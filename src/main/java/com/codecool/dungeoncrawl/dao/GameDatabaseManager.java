@@ -2,6 +2,7 @@ package com.codecool.dungeoncrawl.dao;
 
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.InventoryModel;
 import com.codecool.dungeoncrawl.model.PlayerModel;
 import org.postgresql.ds.PGSimpleDataSource;
 
@@ -12,18 +13,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GameDatabaseManager {
     private PlayerDao playerDao;
     private GameStateDao gameStateDao;
+    private InventoryDao inventoryDao;
 
     public void setup() throws SQLException {
         DataSource dataSource = connect();
         playerDao = new PlayerDaoJdbc(dataSource);
         gameStateDao = new GameStateDaoJdbc(dataSource, playerDao);
+        inventoryDao = new InventoryDaoJdbc(dataSource, playerDao);
     }
 
     public void savePlayer(Player player) {
         PlayerModel model = new PlayerModel(player);
-        playerDao.getAll().forEach(p -> {
-            if (p.getPlayerName().equals(player.getName())){
-                model.setId(p.getId());
+        playerDao.getAll().forEach(playerModel -> {
+            if (playerModel.getPlayerName().equals(player.getName())){
+                model.setId(playerModel.getId());
             }
         });
         if (model.getId() != null) {
@@ -35,16 +38,31 @@ public class GameDatabaseManager {
     }
 
     public void saveGameState(GameState gameState) {
-        gameStateDao.getAll().forEach(g -> {
-            if (g.getPlayer().getPlayerName().equals(gameState.getPlayer().getPlayerName())){
-                gameState.getPlayer().setId(g.getPlayer().getId());
+        GameState newState = new GameState(gameState.getCurrentMap(), gameState.getSavedAt(), gameState.getPlayer());
+        playerDao.getAll().forEach(playerModel -> {
+            if (playerModel.getPlayerName().equals(gameState.getPlayer().getPlayerName())){
+                newState.getPlayer().setId(playerModel.getId());
             }
         });
-
-        if (gameState.getId() != null) {
-            gameStateDao.update(gameState);
+        if (newState.getId() != null) {
+            gameStateDao.update(newState);
         } else {
-            gameStateDao.add(gameState);
+            gameStateDao.add(newState);
+        }
+    }
+
+    public void saveInventory(InventoryModel inventoryModel) {
+        InventoryModel newInventoryModel = new InventoryModel(inventoryModel.getInventoryItems(), inventoryModel.getPlayer());
+        playerDao.getAll().forEach(playerModel -> {
+            if (playerModel.getPlayerName().equals(inventoryModel.getPlayer().getPlayerName())) {
+                newInventoryModel.setId(playerModel.getId());
+            }
+        });
+        System.out.println(newInventoryModel.getId());
+        if (newInventoryModel.getId() != null) {
+            inventoryDao.update(newInventoryModel);
+        } else {
+            inventoryDao.add(newInventoryModel);
         }
     }
 

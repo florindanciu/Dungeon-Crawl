@@ -2,15 +2,12 @@ package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.Tiles;
 import com.codecool.dungeoncrawl.logic.*;
-import com.codecool.dungeoncrawl.util.Notification;
 import com.codecool.dungeoncrawl.util.PopUp;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Set;
 
 public class Player extends Actor {
     public HashMap<String,Integer> inventory = new HashMap<>();

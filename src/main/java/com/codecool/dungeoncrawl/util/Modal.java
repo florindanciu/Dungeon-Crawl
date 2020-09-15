@@ -4,6 +4,7 @@ import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.InventoryModel;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -18,7 +19,7 @@ public class Modal {
 
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 
-    public Modal(Player player, GameDatabaseManager gameDatabaseManager, GameState gameState) {
+    public Modal(Player player, GameDatabaseManager gameDatabaseManager, GameState gameState, InventoryModel inventoryModel) {
         Stage popupWindow=new Stage();
 
         popupWindow.initModality(Modality.APPLICATION_MODAL);
@@ -31,14 +32,14 @@ public class Modal {
         Button cancel = new Button("Cancel");
         save.setOnAction(e -> {
             if (!gameDatabaseManager.checkPlayerDb(player)) {
-                SaveDB.saveDb(player, gameDatabaseManager, gameState);
+                SaveDB.saveDb(player, gameDatabaseManager, gameState, inventoryModel);
                 player.setName(textField.getText());
            } else {
                 alert.setTitle("Confirmation");
                 alert.setContentText("Would you like to overwrite the already existing state?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK){
-                    SaveDB.saveDb(player, gameDatabaseManager, gameState);
+                    SaveDB.saveDb(player, gameDatabaseManager, gameState, inventoryModel);
                 }
             }
             popupWindow.close();

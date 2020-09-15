@@ -2,8 +2,8 @@ package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.logic.*;
 import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.InventoryModel;
 import com.codecool.dungeoncrawl.model.PlayerModel;
-import com.codecool.dungeoncrawl.util.Input;
 import com.codecool.dungeoncrawl.util.Modal;
 import com.codecool.dungeoncrawl.util.Notification;
 
@@ -12,7 +12,6 @@ import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
-import com.codecool.dungeoncrawl.logic.actors.Player;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -21,7 +20,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -33,11 +31,11 @@ import javafx.stage.Stage;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main extends Application {
     GameDatabaseManager dbManager;
-    GameState gameState;
-    Notification notification;
     GameMap map = MapLoader.loadMap("/level1.txt");
     Canvas canvas = new Canvas(
             map.getWidth() * Tiles.TILE_WIDTH,
@@ -54,6 +52,7 @@ public class Main extends Application {
     BorderPane borderPane;
     String levelNumber = "1";
     boolean gameOver = false;
+
 
     public static void main(String[] args) {
         launch(args);
@@ -100,6 +99,9 @@ public class Main extends Application {
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
         new Thread(this::permanentRefresh).start();
+
+
+
     }
 
     private void onKeyReleased(KeyEvent keyEvent) {
@@ -112,12 +114,13 @@ public class Main extends Application {
             exit();
 
         } else if (modalCombinationWin.match(keyEvent)) {
-            Date date = new Date(2017, 02, 01);
-            PlayerModel playerModel= new PlayerModel(map.getPlayer());
-            GameState gameState = new GameState("map1",date, playerModel);
-            new Modal(map.getPlayer(), dbManager, gameState);
+            long now = System.currentTimeMillis();
+            Date sqlDate = new Date(now);
+            PlayerModel playerModel = new PlayerModel(map.getPlayer());
+            GameState gameState = new GameState("map level " + levelNumber, sqlDate, playerModel);
+            InventoryModel inventoryModel = new InventoryModel(map.getPlayer().getInventory(), playerModel);
+            new Modal(map.getPlayer(), dbManager, gameState, inventoryModel);
         }
-
     }
 
     public void permanentRefresh() {
