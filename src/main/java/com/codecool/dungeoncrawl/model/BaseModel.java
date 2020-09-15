@@ -6,7 +6,7 @@ public class BaseModel {
     // null means not saved
     protected Integer id;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

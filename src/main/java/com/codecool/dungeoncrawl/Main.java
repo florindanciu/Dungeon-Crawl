@@ -1,7 +1,10 @@
 package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.logic.*;
+import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.PlayerModel;
 import com.codecool.dungeoncrawl.util.Input;
+import com.codecool.dungeoncrawl.util.Modal;
 import com.codecool.dungeoncrawl.util.Notification;
 
 import com.codecool.dungeoncrawl.util.PopUp;
@@ -28,10 +31,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.sql.Date;
 import java.sql.SQLException;
 
 public class Main extends Application {
     GameDatabaseManager dbManager;
+    GameState gameState;
     Notification notification;
     GameMap map = MapLoader.loadMap("/level1.txt");
     Canvas canvas = new Canvas(
@@ -87,30 +92,36 @@ public class Main extends Application {
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
         refresh();
-        scene.addEventFilter(KeyEvent.KEY_PRESSED,this::onKeyPressed);
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPressed);
 
-        scene.setOnKeyPressed(this::onKeyPressed);
+//        scene.setOnKeyPressed(this::onKeyPressed);
         scene.setOnKeyReleased(this::onKeyReleased);
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
+        new Thread(this::permanentRefresh).start();
     }
 
     private void onKeyReleased(KeyEvent keyEvent) {
         KeyCombination exitCombinationMac = new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN);
         KeyCombination exitCombinationWin = new KeyCodeCombination(KeyCode.F4, KeyCombination.ALT_DOWN);
+        KeyCombination modalCombinationWin = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY);
         if (exitCombinationMac.match(keyEvent)
                 || exitCombinationWin.match(keyEvent)
                 || keyEvent.getCode() == KeyCode.ESCAPE) {
             exit();
 
-            new Thread(this::permanentRefresh).start();
+        } else if (modalCombinationWin.match(keyEvent)) {
+            Date date = new Date(2017, 02, 01);
+            PlayerModel playerModel= new PlayerModel(map.getPlayer());
+            GameState gameState = new GameState("map1",date, playerModel);
+            new Modal(map.getPlayer(), dbManager, gameState);
         }
 
     }
 
     public void permanentRefresh() {
-        while (true){
+        while (true) {
             try {
                 refresh();
                 Thread.sleep(500);
@@ -123,19 +134,19 @@ public class Main extends Application {
     private void onKeyPressed(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
             case UP:
-                map.getPlayer().checkCell(map, combat,0,-1, monsterHp);
+                map.getPlayer().checkCell(map, combat, 0, -1, monsterHp);
                 refresh();
                 break;
             case DOWN:
-                map.getPlayer().checkCell(map, combat,0,1, monsterHp);
+                map.getPlayer().checkCell(map, combat, 0, 1, monsterHp);
                 refresh();
                 break;
             case LEFT:
-                map.getPlayer().checkCell(map, combat,-1,0,monsterHp);
+                map.getPlayer().checkCell(map, combat, -1, 0, monsterHp);
                 refresh();
                 break;
             case RIGHT:
-                map.getPlayer().checkCell(map, combat,1,0,monsterHp);
+                map.getPlayer().checkCell(map, combat, 1, 0, monsterHp);
                 refresh();
                 break;
         }
@@ -143,19 +154,19 @@ public class Main extends Application {
         keyEvent.consume();
         nextLevel("/level2.txt");
 
-        if (map.getPlayer().getInventory().containsKey("KEY") && levelNumber.equals("1")){
-            PopUp.display("Good job!","DOOR 1 OPENED !", "Green");
+        if (map.getPlayer().getInventory().containsKey("KEY") && levelNumber.equals("1")) {
+            PopUp.display("Good job!", "DOOR 1 OPENED !", "Green");
             map.getPlayer().openDoor(map, 20, 19, CellType.OPENED_DOOR1, "KEY");
             map.getPlayer().removeItem("KEY");
             System.out.println(levelNumber);
-        } else if (map.getPlayer().getInventory().containsKey("KEY_2") && levelNumber.equals("2")){
-            PopUp.display("Good job!","DOOR 2 OPENED !", "Green");
+        } else if (map.getPlayer().getInventory().containsKey("KEY_2") && levelNumber.equals("2")) {
+            PopUp.display("Good job!", "DOOR 2 OPENED !", "Green");
             map.getPlayer().openDoor(map, 9, 1, CellType.OPENED_DOOR2, "KEY_2");
             map.getPlayer().removeItem("KEY_2");
             System.out.println(map.getPlayer().getInventory());
             System.out.println(levelNumber);
-        } else if (map.getPlayer().getInventory().containsKey("KEY_3") && levelNumber.equals("2")){
-            PopUp.display("Good job!","DOOR 3 OPENED !", "Green");
+        } else if (map.getPlayer().getInventory().containsKey("KEY_3") && levelNumber.equals("2")) {
+            PopUp.display("Good job!", "DOOR 3 OPENED !", "Green");
             map.getPlayer().openDoor(map, 0, 19, CellType.OPENED_DOOR3, "KEY_3");
             map.getPlayer().removeItem("KEY_3");
             System.out.println(map.getPlayer().getInventory());
@@ -164,7 +175,7 @@ public class Main extends Application {
     }
 
     public void gameEnd() {
-        if (map.getPlayer().getCell().getX() == 0 && map.getPlayer().getCell().getY() == 19){
+        if (map.getPlayer().getCell().getX() == 0 && map.getPlayer().getCell().getY() == 19) {
             if (map.getCell(0, 19).getType().equals(CellType.OPENED_DOOR3)) {
                 System.out.println("Test");
                 PopUp.display("Dungeon Crawl", "YOU WON!", "Green");
@@ -181,14 +192,14 @@ public class Main extends Application {
             map.getPlayer().setHealth(10);
             map.getPlayer().setName(textField.getText());
             inventory.setText("");
-            Tiles.changePlayerLook(25,0);
+            Tiles.changePlayerLook(25, 0);
             refresh();
             gameOver = false;
         }
     }
 
     public void nextLevel(String level) {
-        if (map.getPlayer().getCell().getX() == 20 && map.getPlayer().getCell().getY() == 18){
+        if (map.getPlayer().getCell().getX() == 20 && map.getPlayer().getCell().getY() == 18) {
             if (map.getCell(20, 19).getType().equals(CellType.OPENED_DOOR1)) {
                 String name = map.getPlayer().getName();
                 map = MapLoader.loadMap(level);
@@ -206,37 +217,37 @@ public class Main extends Application {
     }
 
     public void refresh() {
-            if (!(map.getPlayer().checkIfAlive(map.getPlayer()))) {
-                levelNumber = "1";
-                PopUp.display("YOU LOST", "GAME OVER!", "Red");
-                map = MapLoader.loadMap("/level1.txt");
-                canvas = new Canvas(
-                        map.getWidth() * Tiles.TILE_WIDTH,
-                        map.getHeight() * Tiles.TILE_WIDTH);
-                borderPane.setCenter(canvas);
-                primaryStage.sizeToScene();
-                context = canvas.getGraphicsContext2D();
-                map.getPlayer().setHealth(10);
-                map.getPlayer().setName(textField.getText());
-                inventory.setText("");
-                Tiles.changePlayerLook(25, 0);
-                refresh();
-                gameEnd();
-                context.setFill(Color.BLACK);
-                context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-                for (int x = 0; x < map.getWidth(); x++) {
-                    for (int y = 0; y < map.getHeight(); y++) {
-                        Cell cell = map.getCell(x, y);
-                        if (cell.getActor() != null) {
-                            Tiles.drawTile(context, cell.getActor(), x, y);
-                        } else {
-                            Tiles.drawTile(context, cell, x, y);
-                        }
-                    }
+        if (!(map.getPlayer().checkIfAlive(map.getPlayer()))){
+            levelNumber = "1";
+            PopUp.display("YOU LOST", "GAME OVER!", "Red");
+            map = MapLoader.loadMap("/level1.txt");
+            canvas = new Canvas(
+                    map.getWidth() * Tiles.TILE_WIDTH,
+                    map.getHeight() * Tiles.TILE_WIDTH);
+            borderPane.setCenter(canvas);
+            primaryStage.sizeToScene();
+            context = canvas.getGraphicsContext2D();
+            map.getPlayer().setHealth(10);
+            map.getPlayer().setName(textField.getText());
+            inventory.setText("");
+            Tiles.changePlayerLook(25,0);
+            refresh();
+        }
+        gameEnd();
+        context.setFill(Color.BLACK);
+        context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        for (int x = 0; x < map.getWidth(); x++) {
+            for (int y = 0; y < map.getHeight(); y++) {
+                Cell cell = map.getCell(x, y);
+                if (cell.getActor() != null) {
+                    Tiles.drawTile(context, cell.getActor(), x, y);
+                }else {
+                    Tiles.drawTile(context, cell, x, y);
                 }
-                healthLabel.setText(" " + map.getPlayer().getHealth());
             }
         }
+        healthLabel.setText(" " + map.getPlayer().getHealth());
+    }
 
     private void setupDbManager() {
         dbManager = new GameDatabaseManager();
