@@ -15,5 +15,13 @@ CREATE TABLE public.player (
     y integer NOT NULL
 );
 
+DROP TABLE IF EXISTS public.inventory;
+CREATE TABLE public.inventory (
+   id serial NOT NULL PRIMARY KEY,
+   item text NOT NULL,
+   quantity integer NOT NULL,
+   player_id integer NOT NULL
+);
+
 ALTER TABLE ONLY public.game_state
     ADD CONSTRAINT fk_player_id FOREIGN KEY (player_id) REFERENCES public.player(id);

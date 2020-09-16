@@ -4,7 +4,6 @@ import com.codecool.dungeoncrawl.logic.actors.Ghost;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 import com.codecool.dungeoncrawl.logic.actors.Scorpion;
-import com.codecool.dungeoncrawl.util.Input;
 
 import java.io.InputStream;
 import java.util.Scanner;
