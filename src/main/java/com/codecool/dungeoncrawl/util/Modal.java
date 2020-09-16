@@ -1,10 +1,13 @@
 package com.codecool.dungeoncrawl.util;
 
 import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
+import com.codecool.dungeoncrawl.dao.PlayerDao;
+import com.codecool.dungeoncrawl.dao.PlayerDaoJdbc;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.InventoryModel;
+import com.codecool.dungeoncrawl.model.PlayerModel;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -24,16 +27,13 @@ public class Modal {
 
         popupWindow.initModality(Modality.APPLICATION_MODAL);
         popupWindow.setTitle(null);
-        Label label1= new Label("Save username " + player.getName() + " + game state?" );
-
-        TextField textField = new TextField();
-        textField.setMaxWidth(150);
+        Label label1= new Label("Hello " + player.getName() + "!\nDo you want to save this username,\n game state and inventory items?" );
+        label1.setAlignment(Pos.CENTER);
         Button save = new Button("Save");
         Button cancel = new Button("Cancel");
         save.setOnAction(e -> {
             if (!gameDatabaseManager.checkPlayerDb(player)) {
                 SaveDB.saveDb(player, gameDatabaseManager, gameState, inventoryModel);
-                player.setName(textField.getText());
            } else {
                 alert.setTitle("Confirmation");
                 alert.setContentText("Would you like to overwrite the already existing state?");
@@ -52,7 +52,7 @@ public class Modal {
         buttons.setSpacing(10);
 
         VBox layout= new VBox(10);
-        layout.getChildren().addAll(label1,textField, buttons);
+        layout.getChildren().addAll(label1, buttons);
         layout.setAlignment(Pos.CENTER);
         Scene scene1= new Scene(layout, 300, 250);
         popupWindow.setScene(scene1);

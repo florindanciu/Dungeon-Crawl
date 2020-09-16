@@ -52,7 +52,7 @@ public class GameStateDaoJdbc implements GameStateDao {
     @Override
     public GameState get(int id) {
         try (Connection connection = dataSource.getConnection()) {
-            String sql = "SELECT current_map, saved_at, player_id FROM game_state WHERE id = ?";
+            String sql = "SELECT current_map, saved_at, player_id FROM game_state WHERE player_id = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();

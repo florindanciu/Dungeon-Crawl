@@ -23,7 +23,6 @@ public class InventoryDaoJdbc implements InventoryDao{
     @Override
     public void add(InventoryModel inventoryModel) {
         try (Connection connection = dataSource.getConnection()) {
-            System.out.println("add in");
             for (String key : inventoryModel.getInventoryItems().keySet()) {
                 String sql = "INSERT INTO inventory(item, quantity, player_id) VALUES (?, ?, ?)";
                 PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);

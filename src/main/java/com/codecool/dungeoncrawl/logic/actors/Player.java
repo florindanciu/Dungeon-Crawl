@@ -27,7 +27,7 @@ public class Player extends Actor {
             inventory.put(item, count++);
         }
         inventory.put(item, count);
-        System.out.println(inventory.toString());
+        System.out.println("Player class: " + inventory.toString());
     }
 
     public HashMap<String,Integer> getInventory() {

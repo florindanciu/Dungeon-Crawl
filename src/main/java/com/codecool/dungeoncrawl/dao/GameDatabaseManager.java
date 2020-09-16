@@ -7,7 +7,9 @@ import com.codecool.dungeoncrawl.model.PlayerModel;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
+import javax.swing.text.html.ListView;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GameDatabaseManager {
@@ -20,6 +22,18 @@ public class GameDatabaseManager {
         playerDao = new PlayerDaoJdbc(dataSource);
         gameStateDao = new GameStateDaoJdbc(dataSource, playerDao);
         inventoryDao = new InventoryDaoJdbc(dataSource, playerDao);
+    }
+
+    public List<PlayerModel> getPlayers(){
+        return playerDao.getAll();
+    }
+
+    public GameStateDao getGameStateDao() {
+        return gameStateDao;
+    }
+
+    public PlayerDao getPlayerDao() {
+        return playerDao;
     }
 
     public void savePlayer(Player player) {
@@ -58,8 +72,7 @@ public class GameDatabaseManager {
                 newInventoryModel.setId(playerModel.getId());
             }
         });
-        System.out.println(newInventoryModel.getId());
-        if (newInventoryModel.getId() != null) {
+        if (inventoryModel.getId() != null) {
             inventoryDao.update(newInventoryModel);
         } else {
             inventoryDao.add(newInventoryModel);
