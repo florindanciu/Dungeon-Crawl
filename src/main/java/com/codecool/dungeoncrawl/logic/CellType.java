@@ -29,6 +29,9 @@ public enum CellType {
     DRIED_TREES("dried_trees"),
     BRIDGE("bridge"),
     RAIL("rail"),
+    SKELETON_HEAD("skeleton_head"),
+    TRAP("trap"),
+    APPLE("apple"),
     WATER("water");
 
     private final String tileName;

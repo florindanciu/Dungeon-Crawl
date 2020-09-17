@@ -2,6 +2,7 @@ package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.Tiles;
 import com.codecool.dungeoncrawl.logic.*;
+import com.codecool.dungeoncrawl.util.FlashMessage;
 import com.codecool.dungeoncrawl.util.PopUp;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -124,7 +125,18 @@ public class Player extends Actor {
 
     private void checkMove(GameMap map, Combat combat, int x, int y, Label label, Label label2) {
         try {
-            if (map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName().equals("ghost")){
+            if (map.getPlayer().getCell().getNeighbor(x,y).getType().equals(CellType.WATER)){
+                PopUp.display("YOU DIED", "You went into the water and drowned", "Red");
+                this.setHealth(0);
+            }
+            if(map.getPlayer().getCell().getNeighbor(x,y).getType().equals(CellType.APPLE)){
+                map.getPlayer().addHealth(25);
+                FlashMessage.display("Nice !", "+25 Health");
+                map.getPlayer().getCell().getNeighbor(x,y).setType(CellType.DRIED_TREES);
+            }
+            if (map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName().equals("ghost") ||
+                map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName().equals("skeleton_head") ||
+                map.getPlayer().getCell().getNeighbor(x,y).getActor().getTileName().equals("trap")){
                 this.setHealth(0);
             }
             map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName();

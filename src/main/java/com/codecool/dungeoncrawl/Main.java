@@ -1,6 +1,7 @@
 package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.logic.*;
+import com.codecool.dungeoncrawl.logic.actors.Ghost;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.PlayerModel;
@@ -121,7 +122,6 @@ public class Main extends Application {
             try {
                 for (PlayerModel playerModel: dbManager.getPlayerDao().getAll()) {
                     Export.serialize(dbManager.getGameStateDao().get(playerModel.getId()),path, fileName);
-                    System.out.println(Import.Import("Exports/Gabi.json"));
                 }
             } catch (IOException ioException) {
                 ioException.printStackTrace();
@@ -247,6 +247,7 @@ public class Main extends Application {
             FlashMessage.display("Good job", "DOOR 1 OPENED !");
             map.getPlayer().openDoor(map, 20, 19, CellType.OPENED_DOOR1, "KEY");
             map.getPlayer().removeItem("KEY");
+            inventory.setText(map.getPlayer().getInventory().toString());
             System.out.println(levelNumber);
         } else if (map.getPlayer().getInventory().containsKey("KEY_2") && levelNumber.equals("2")) {
             FlashMessage.display("Good job", "DOOR 2 OPENED !");
@@ -264,6 +265,7 @@ public class Main extends Application {
             FlashMessage.display("Good job", "DOOR 4 OPENED !");
             map.getPlayer().openDoor(map, 77, 74, CellType.OPENED_DOOR4, "KEY_4");
             map.getPlayer().removeItem("KEY_4");
+            map.getPlayer().getCell().setType(CellType.WHITE_FLOOR);
             System.out.println(map.getPlayer().getInventory());
             System.out.println(levelNumber);
         }
@@ -300,7 +302,7 @@ public class Main extends Application {
                 map.getPlayer().setName(name);
                 resize = true;
                 refresh();
-                FlashMessage.display("Felicitation", "You are in level 2 now!");
+                FlashMessage.display("Good job!", "You are in level 2 now!");
                 borderPane.setCenter(canvas);
                 primaryStage.sizeToScene();
                 context = canvas.getGraphicsContext2D();
@@ -323,9 +325,9 @@ public class Main extends Application {
             map.getPlayer().setHealth(map.getPlayer().getHealth());
             inventory.setText("");
             map.getPlayer().getInventory().clear();
+            map.getCell(map.getPlayer().getX(), map.getPlayer().getY()).setType(CellType.FLOOR);
             Tiles.changePlayerLook(25,0);
             new Notification(map, playerName);
-            refresh();
         }
     }
 

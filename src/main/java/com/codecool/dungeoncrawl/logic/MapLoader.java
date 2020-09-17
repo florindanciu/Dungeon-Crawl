@@ -1,9 +1,6 @@
 package com.codecool.dungeoncrawl.logic;
 
-import com.codecool.dungeoncrawl.logic.actors.Ghost;
-import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.actors.Skeleton;
-import com.codecool.dungeoncrawl.logic.actors.Scorpion;
+import com.codecool.dungeoncrawl.logic.actors.*;
 import com.codecool.dungeoncrawl.util.Input;
 
 import java.io.InputStream;
@@ -97,11 +94,22 @@ public class MapLoader {
                             cell.setType(CellType.RIVER_TO_RIGHT);
                             break;
                         case 'g':
-                            cell.setType(CellType.FLOOR);
+                            cell.setType(CellType.TRAP);
                             new Ghost(cell);
                             break;
                         case 'w':
                             cell.setType(CellType.WATER);
+                            break;
+                        case 'p':
+                            cell.setType(CellType.WHITE_FLOOR);
+                            new SkeletonHead(cell);
+                            break;
+                        case 't':
+                            cell.setType(CellType.TRAP);
+                            new Trap(cell);
+                            break;
+                        case 'm':
+                            cell.setType(CellType.APPLE);
                             break;
                         case '@':
                             cell.setType(CellType.FLOOR);
