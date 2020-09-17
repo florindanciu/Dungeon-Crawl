@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InventoryModel extends BaseModel{
-    private HashMap<String, Integer> inventoryItems = new HashMap<>();
+    private HashMap<String, Integer> inventoryItems;
     private PlayerModel player;
 
     public InventoryModel(HashMap<String, Integer> inventoryItems, PlayerModel player) {
+        System.out.println("inventoryModel: " + inventoryItems);
         this.inventoryItems = inventoryItems;
         this.player = player;
     }

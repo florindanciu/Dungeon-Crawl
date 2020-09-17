@@ -8,7 +8,9 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class GameDatabaseManager {
     private PlayerDao playerDao;
@@ -20,6 +22,18 @@ public class GameDatabaseManager {
         playerDao = new PlayerDaoJdbc(dataSource);
         gameStateDao = new GameStateDaoJdbc(dataSource, playerDao);
         inventoryDao = new InventoryDaoJdbc(dataSource, playerDao);
+    }
+
+    public List<PlayerModel> getPlayers(){
+        return playerDao.getAll();
+    }
+
+    public GameStateDao getGameStateDao() {
+        return gameStateDao;
+    }
+
+    public PlayerDao getPlayerDao() {
+        return playerDao;
     }
 
     public void savePlayer(Player player) {
@@ -38,16 +52,20 @@ public class GameDatabaseManager {
     }
 
     public void saveGameState(GameState gameState) {
+//        AtomicReference<Integer> id = new AtomicReference<>();
         GameState newState = new GameState(gameState.getCurrentMap(), gameState.getSavedAt(), gameState.getPlayer());
         playerDao.getAll().forEach(playerModel -> {
             if (playerModel.getPlayerName().equals(gameState.getPlayer().getPlayerName())){
+//                id.set(playerModel.getId());
                 newState.getPlayer().setId(playerModel.getId());
             }
         });
-        if (newState.getId() != null) {
+        if (gameStateDao.getAll().stream().anyMatch(state -> state.getPlayer().getId().equals(newState.getPlayer().getId()))) {
             gameStateDao.update(newState);
+            System.out.println("update");
         } else {
             gameStateDao.add(newState);
+            System.out.println("add");
         }
     }
 
@@ -58,8 +76,7 @@ public class GameDatabaseManager {
                 newInventoryModel.setId(playerModel.getId());
             }
         });
-        System.out.println(newInventoryModel.getId());
-        if (newInventoryModel.getId() != null) {
+        if (inventoryModel.getId() != null) {
             inventoryDao.update(newInventoryModel);
         } else {
             inventoryDao.add(newInventoryModel);

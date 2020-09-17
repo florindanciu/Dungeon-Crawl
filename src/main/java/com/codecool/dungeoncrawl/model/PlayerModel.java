@@ -20,7 +20,13 @@ public class PlayerModel extends BaseModel {
         this.y = player.getY();
 
         this.hp = player.getHealth();
+    }
 
+    public PlayerModel(String playerName, int hp, int x, int y) {
+        this.playerName = playerName;
+        this.setHp(hp);
+        this.x = x;
+        this.y = y;
     }
 
     public String getPlayerName() {

@@ -62,7 +62,7 @@ public class PlayerDaoJdbc implements PlayerDao {
             int hp = resultSet.getInt(2);
             int x = resultSet.getInt(3);
             int y = resultSet.getInt(4);
-            PlayerModel playerModel = new PlayerModel(player_name, x, y);
+            PlayerModel playerModel = new PlayerModel(player_name,hp, x, y);
             playerModel.setId(id);
             return playerModel;
 

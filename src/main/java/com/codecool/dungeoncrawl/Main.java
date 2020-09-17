@@ -2,26 +2,26 @@ package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.dao.PlayerDaoJdbc;
 import com.codecool.dungeoncrawl.logic.*;
+import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.PlayerModel;
-import com.codecool.dungeoncrawl.util.Input;
+import com.codecool.dungeoncrawl.util.*;
 import com.codecool.dungeoncrawl.model.InventoryModel;
 import com.codecool.dungeoncrawl.model.PlayerModel;
-import com.codecool.dungeoncrawl.util.Modal;
-import com.codecool.dungeoncrawl.util.Notification;
 
-import com.codecool.dungeoncrawl.util.PopUp;
 import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -32,13 +32,24 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+// LoadMap nu face update in gamestate
+// Din mapa 2 in mapa 1 nu merge , se suprapun hartile
+// Daca adaug butonul de export nu pot sa misc playerul
+// Player name se scrie de 2 ori
 
 public class Main extends Application {
     GameDatabaseManager dbManager;
@@ -52,13 +63,15 @@ public class Main extends Application {
     Label monsterHp = new Label();
     Label inventory = new Label();
     Label playerName = new Label();
+    Button exportGame = new Button();
     TextField textField = new TextField();
     Button getItemButton = new Button("Take item");
     Stage primaryStage;
     BorderPane borderPane;
     String levelNumber = "1";
     boolean gameOver = false;
-    boolean resize = false;
+    boolean resize = true;
+
 
     public static void main(String[] args) {
         launch(args);
@@ -68,8 +81,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         setupDbManager();
         map.getPlayer().setHealth(10);
-        new Notification(map);
-        textField.setOnAction(event -> map.getPlayer().setName(textField.getText()));
+        new Notification(map, playerName);
         this.primaryStage = primaryStage;
 
         GridPane ui = new GridPane();
@@ -78,8 +90,9 @@ public class Main extends Application {
 
         ui.add(new Label("Health: "), 0, 0);
         ui.add(new Label("Inventory: "), 0, 3);
-        ui.add(new Label("Player name: " + map.getPlayer().getName()), 0, 5);
+        ui.add(new Label("Player name: "), 0, 5);
         ui.add(new Label("Monster health: "), 0, 6);
+        ui.add(new Label("Export game state"),0,7);
 
         getItemButton.setVisible(false);
 
@@ -88,6 +101,22 @@ public class Main extends Application {
         ui.add(inventory, 0, 4);
         ui.add(playerName, 2, 5);
         ui.add(monsterHp, 2, 6);
+        ui.add(exportGame, 2,7);
+
+        exportGame.setText("Export");
+        // FIX THIS LINE (CANT MOVE PLAYER BECAUSE OF THIS)
+        exportGame.setOnAction(e -> {
+            String path = GetPath.getPath();
+            String fileName = GetFileName.getFileName();
+            try {
+                for (PlayerModel playerModel: dbManager.getPlayerDao().getAll()) {
+                    Export.serialize(dbManager.getGameStateDao().get(playerModel.getId()),path, fileName);
+                    System.out.println(Import.Import("Exports/Gabi.json"));
+                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
 
         borderPane = new BorderPane();
 
@@ -97,22 +126,65 @@ public class Main extends Application {
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
         refresh();
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPressed);
 
-        scene.setOnKeyPressed(this::onKeyPressed);
-        scene.setOnKeyReleased(this::onKeyReleased);
+//        scene.setOnKeyPressed(this::onKeyPressed);
+//        scene.setOnKeyReleased(this::onKeyReleased);
+
+        scene.addEventFilter(KeyEvent.KEY_PRESSED,this::onKeyPressed);
+        scene.addEventFilter(KeyEvent.KEY_RELEASED,this::onKeyReleased);
+
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
         new Thread(this::permanentRefresh).start();
 
+    }
 
+    public void LoadMenu() {
+        Stage popupWindow=new Stage();
 
+        popupWindow.initModality(Modality.APPLICATION_MODAL);
+        popupWindow.setTitle(null);
+
+        HBox players = new HBox();
+        for (PlayerModel playerModel: dbManager.getPlayerDao().getAll()) {
+
+            Hyperlink hyperlink = new Hyperlink(playerModel.getPlayerName());
+            players.getChildren().addAll(hyperlink);
+
+            hyperlink.setOnAction(e -> {
+                map = MapLoader.loadMap(dbManager.getGameStateDao().get(playerModel.getId()).getCurrentMap());
+                int hp = dbManager.getPlayerDao().get(playerModel.getId()).getHp();
+                String playerName = dbManager.getPlayerDao().get(playerModel.getId()).getPlayerName();
+                Cell cell = new Cell(map,
+                        dbManager.getPlayerDao().get(playerModel.getId()).getX(),
+                        dbManager.getPlayerDao().get(playerModel.getId()).getY(),
+                        CellType.FLOOR);
+                map.setPlayer(new Player(cell));
+                map.getPlayer().setName(playerName);
+                map.getPlayer().setHealth(hp);
+                healthLabel.setText(Integer.toString(map.getPlayer().getHealth()));
+                resize = true;
+                refresh();
+                popupWindow.close();
+
+            });
+        }
+        players.setAlignment(Pos.CENTER);
+        players.setSpacing(10);
+
+        VBox layout= new VBox(10);
+        layout.getChildren().addAll(players);
+        layout.setAlignment(Pos.CENTER);
+        Scene scene1= new Scene(layout, 300, 250);
+        popupWindow.setScene(scene1);
+        popupWindow.showAndWait();
     }
 
     private void onKeyReleased(KeyEvent keyEvent) {
         KeyCombination exitCombinationMac = new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN);
         KeyCombination exitCombinationWin = new KeyCodeCombination(KeyCode.F4, KeyCombination.ALT_DOWN);
         KeyCombination modalCombinationWin = new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY);
+        KeyCombination loadCombinationWin = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_ANY);
         if (exitCombinationMac.match(keyEvent)
                 || exitCombinationWin.match(keyEvent)
                 || keyEvent.getCode() == KeyCode.ESCAPE) {
@@ -122,16 +194,19 @@ public class Main extends Application {
             long now = System.currentTimeMillis();
             Date sqlDate = new Date(now);
             PlayerModel playerModel = new PlayerModel(map.getPlayer());
-            GameState gameState = new GameState("map level " + levelNumber, sqlDate, playerModel);
+            GameState gameState = new GameState("/level" + levelNumber + ".txt", sqlDate, playerModel);
+            System.out.println("main onKeyReleased: " + map.getPlayer().getInventory());
             InventoryModel inventoryModel = new InventoryModel(map.getPlayer().getInventory(), playerModel);
             new Modal(map.getPlayer(), dbManager, gameState, inventoryModel);
+        } else if (loadCombinationWin.match(keyEvent)) {
+            LoadMenu();
         }
     }
 
     public void permanentRefresh() {
         while (true) {
             try {
-                refreshMovingMap();
+                refresh();
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -142,19 +217,19 @@ public class Main extends Application {
     private void onKeyPressed(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
             case UP:
-                map.getPlayer().checkCell(map, combat, 0, -1, monsterHp);
+                map.getPlayer().checkCell(map, combat, 0, -1, monsterHp, healthLabel);
                 refresh();
                 break;
             case DOWN:
-                map.getPlayer().checkCell(map, combat, 0, 1, monsterHp);
+                map.getPlayer().checkCell(map, combat, 0, 1, monsterHp, healthLabel);
                 refresh();
                 break;
             case LEFT:
-                map.getPlayer().checkCell(map, combat, -1, 0, monsterHp);
+                map.getPlayer().checkCell(map, combat, -1, 0, monsterHp, healthLabel);
                 refresh();
                 break;
             case RIGHT:
-                map.getPlayer().checkCell(map, combat, 1, 0, monsterHp);
+                map.getPlayer().checkCell(map, combat, 1, 0, monsterHp, healthLabel);
                 refresh();
                 break;
         }
@@ -212,43 +287,40 @@ public class Main extends Application {
                 String name = map.getPlayer().getName();
                 map = MapLoader.loadMap(level);
                 map.getPlayer().setName(name);
-                canvas = new Canvas(
-                        600,700);
+                resize = true;
+                refresh();
                 borderPane.setCenter(canvas);
                 primaryStage.sizeToScene();
                 context = canvas.getGraphicsContext2D();
-                resize = true;
-                refreshMovingMap();
                 levelNumber = "2";
-                saveInDb();
             }
         }
     }
 
-    public void saveInDb(){
-        Date date = new Date(2020,10,10);
-        PlayerModel playerModel = new PlayerModel(map.getPlayer().getName(), map.getPlayer().getX(),map.getPlayer().getY());
-        GameState gameState = new GameState("Map 1", date, playerModel);
-        GameDatabaseManager gameDatabaseManager = new GameDatabaseManager();
-        gameDatabaseManager.savePlayer(map.getPlayer());
+    public void checkPlayerState(){
+        if (!(map.getPlayer().checkIfAlive(map.getPlayer()))){
+            levelNumber = "1";
+            PopUp.display("YOU LOST", "GAME OVER!", "Red");
+            map = MapLoader.loadMap("/level1.txt");
+            canvas = new Canvas(
+                    map.getWidth() * Tiles.TILE_WIDTH,
+                    map.getHeight() * Tiles.TILE_WIDTH);
+            borderPane.setCenter(canvas);
+            primaryStage.sizeToScene();
+            context = canvas.getGraphicsContext2D();
+            map.getPlayer().setHealth(map.getPlayer().getHealth());
+            inventory.setText("");
+            map.getPlayer().getInventory().clear();
+            Tiles.changePlayerLook(25,0);
+            new Notification(map, playerName);
+            refresh();
+        }
     }
 
-    public List<Double> calculateMapSize(){
-        Double x = canvas.getWidth() / Tiles.TILE_WIDTH * 2;
-        Double y = x * Tiles.TILE_WIDTH * 2;
-        Double z = y - Tiles.TILE_WIDTH;
-        Double result = z / Tiles.TILE_WIDTH;
-        System.out.println(z);
-        System.out.println(result);
+    private void refresh() {
 
-        Double left = result - x;
-        Double right = result + x;
-
-        List<Double> finalResult = List.of(left,right,z);
-        return finalResult;
-    }
-
-    private void refreshMovingMap() {
+        checkPlayerState();
+        healthLabel.setText("" + map.getPlayer().getHealth());
 
         Rectangle2D bounds= Screen.getPrimary().getVisualBounds();
         int avWidth=(int)(bounds.getWidth()/1.5);
@@ -318,7 +390,7 @@ public class Main extends Application {
             primaryStage.centerOnScreen();
             resize=false;
         }
-        //System.out.println(playerX+" "+playerY);
+
         for (int x = startX,i=0; x <= endX; x++,i++) {
             for (int y =startY,j=0; y <= endY; y++,j++) {
                 //System.out.println("Drawing: "+x+" "+y);
@@ -331,41 +403,8 @@ public class Main extends Application {
             }
         }
 
-
-        //healthLabel.setText("" + map.getPlayer().getHealth());
-    }
-
-    public void refresh() {
-        if (!(map.getPlayer().checkIfAlive(map.getPlayer()))){
-            levelNumber = "1";
-            PopUp.display("YOU LOST", "GAME OVER!", "Red");
-            map = MapLoader.loadMap("/level1.txt");
-            canvas = new Canvas(
-                    map.getWidth() * Tiles.TILE_WIDTH,
-                    map.getHeight() * Tiles.TILE_WIDTH);
-            borderPane.setCenter(canvas);
-            primaryStage.sizeToScene();
-            context = canvas.getGraphicsContext2D();
-            map.getPlayer().setHealth(10);
-            map.getPlayer().setName(textField.getText());
-            inventory.setText("");
-            Tiles.changePlayerLook(25,0);
-//            refresh();
-        }
         gameEnd();
-        context.setFill(Color.BLACK);
-        context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        for (int x = 0; x < map.getWidth(); x++) {
-            for (int y = 0; y < map.getHeight(); y++) {
-                Cell cell = map.getCell(x, y);
-                if (cell.getActor() != null) {
-                    Tiles.drawTile(context, cell.getActor(), x, y);
-                }else {
-                    Tiles.drawTile(context, cell, x, y);
-                }
-            }
-        }
-        healthLabel.setText(" " + map.getPlayer().getHealth());
+
     }
 
     private void setupDbManager() {

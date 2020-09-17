@@ -1,10 +1,15 @@
 package com.codecool.dungeoncrawl.model;
 
+import com.codecool.dungeoncrawl.util.Export;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
 
 public class GameState extends BaseModel {
+    @JsonDeserialize(as = GameState.class)
+
     private Date savedAt;
     private String currentMap;
     private List<String> discoveredMaps = new ArrayList<>();

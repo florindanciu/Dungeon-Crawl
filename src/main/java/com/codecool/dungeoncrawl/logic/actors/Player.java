@@ -27,7 +27,7 @@ public class Player extends Actor {
             inventory.put(item, count++);
         }
         inventory.put(item, count);
-        System.out.println(inventory.toString());
+        System.out.println("Player class: " + inventory.toString());
     }
 
     public HashMap<String,Integer> getInventory() {
@@ -96,14 +96,14 @@ public class Player extends Actor {
         }
     }
 
-    public void checkCell(GameMap map, Combat combat, int x, int y, Label label) {
+    public void checkCell(GameMap map, Combat combat, int x, int y, Label label, Label label2) {
         if (isAdmin()){
-            checkMove(map, combat, x, y, label);
+            checkMove(map, combat, x, y, label, label2);
         } else {
             if (!(map.getPlayer().getCell().getNeighbor(x,y).getTileName().equals("wall")) &&
                     !(map.getPlayer().getCell().getNeighbor(x,y).getTileName().contains("closed"))){
                 if(this.checkIfAlive(this)){
-                    checkMove(map, combat, x, y, label);
+                    checkMove(map, combat, x, y, label, label2);
                 } else {
                     PopUp.display("YOU LOST", "GAME OVER!", "Red");
                 }
@@ -128,13 +128,13 @@ public class Player extends Actor {
         }
     }
 
-    private void checkMove(GameMap map, Combat combat, int x, int y, Label label) {
+    private void checkMove(GameMap map, Combat combat, int x, int y, Label label, Label label2) {
         try {
             if (map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName().equals("ghost")){
                 this.setHealth(0);
             }
             map.getPlayer().getCell().getNeighbor(x, y).getActor().getTileName();
-            combat.fight(map.getPlayer(),map.getPlayer().getCell().getNeighbor(x, y).getActor(), label);
+            combat.fight(map.getPlayer(),map.getPlayer().getCell().getNeighbor(x, y).getActor(), label, label2);
             if (map.getPlayer().getCell().getNeighbor(x, y).getActor().getHealth() <= 0){
                 map.getPlayer().getCell().setType(CellType.FLOOR);
                 map.getPlayer().move(x, y);
