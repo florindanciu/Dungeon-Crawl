@@ -1,13 +1,11 @@
 package com.codecool.dungeoncrawl;
 
-import com.codecool.dungeoncrawl.dao.PlayerDaoJdbc;
 import com.codecool.dungeoncrawl.logic.*;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.PlayerModel;
 import com.codecool.dungeoncrawl.util.*;
 import com.codecool.dungeoncrawl.model.InventoryModel;
-import com.codecool.dungeoncrawl.model.PlayerModel;
 
 import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.logic.Cell;
@@ -30,26 +28,14 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-// LoadMap nu face update in gamestate
-// Din mapa 2 in mapa 1 nu merge , se suprapun hartile
-// Daca adaug butonul de export nu pot sa misc playerul
-// Player name se scrie de 2 ori
 
 public class Main extends Application {
     GameDatabaseManager dbManager;
@@ -64,6 +50,7 @@ public class Main extends Application {
     Label inventory = new Label();
     Label playerName = new Label();
     Button exportGame = new Button();
+    Button importGame = new Button();
     TextField textField = new TextField();
     Button getItemButton = new Button("Take item");
     Stage primaryStage;
@@ -93,6 +80,7 @@ public class Main extends Application {
         ui.add(new Label("Player name: "), 0, 5);
         ui.add(new Label("Monster health: "), 0, 6);
         ui.add(new Label("Export game state"),0,7);
+        ui.add(new Label("Import game state"),0,8);
 
         getItemButton.setVisible(false);
 
@@ -102,9 +90,31 @@ public class Main extends Application {
         ui.add(playerName, 2, 5);
         ui.add(monsterHp, 2, 6);
         ui.add(exportGame, 2,7);
+        ui.add(importGame, 2,8);
+
+        importGame.setText("Import");
+        importGame.setOnAction(e -> {
+            String path = GetImportPath.getImportPath();
+            try {
+                map = MapLoader.loadMap(Import.Import(path).getCurrentMap());
+                int hp = Import.Import(path).getPlayer().getHp();
+                String playerName = Import.Import(path).getPlayer().getPlayerName();
+                Cell cell = new Cell(map,
+                        Import.Import(path).getPlayer().getX(),
+                        Import.Import(path).getPlayer().getY(),
+                        CellType.FLOOR);
+                map.setPlayer(new Player(cell));
+                map.getPlayer().setName(playerName);
+                map.getPlayer().setHealth(hp);
+                healthLabel.setText(Integer.toString(map.getPlayer().getHealth()));
+                resize = true;
+                refresh();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
 
         exportGame.setText("Export");
-        // FIX THIS LINE (CANT MOVE PLAYER BECAUSE OF THIS)
         exportGame.setOnAction(e -> {
             String path = GetPath.getPath();
             String fileName = GetFileName.getFileName();
@@ -127,9 +137,6 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         refresh();
 
-//        scene.setOnKeyPressed(this::onKeyPressed);
-//        scene.setOnKeyReleased(this::onKeyReleased);
-
         scene.addEventFilter(KeyEvent.KEY_PRESSED,this::onKeyPressed);
         scene.addEventFilter(KeyEvent.KEY_RELEASED,this::onKeyReleased);
 
@@ -145,7 +152,7 @@ public class Main extends Application {
         popupWindow.initModality(Modality.APPLICATION_MODAL);
         popupWindow.setTitle(null);
 
-        HBox players = new HBox();
+        VBox players = new VBox();
         for (PlayerModel playerModel: dbManager.getPlayerDao().getAll()) {
 
             Hyperlink hyperlink = new Hyperlink(playerModel.getPlayerName());
@@ -172,7 +179,7 @@ public class Main extends Application {
         players.setAlignment(Pos.CENTER);
         players.setSpacing(10);
 
-        VBox layout= new VBox(10);
+        VBox layout = new VBox(10);
         layout.getChildren().addAll(players);
         layout.setAlignment(Pos.CENTER);
         Scene scene1= new Scene(layout, 300, 250);
@@ -195,7 +202,6 @@ public class Main extends Application {
             Date sqlDate = new Date(now);
             PlayerModel playerModel = new PlayerModel(map.getPlayer());
             GameState gameState = new GameState("/level" + levelNumber + ".txt", sqlDate, playerModel);
-            System.out.println("main onKeyReleased: " + map.getPlayer().getInventory());
             InventoryModel inventoryModel = new InventoryModel(map.getPlayer().getInventory(), playerModel);
             new Modal(map.getPlayer(), dbManager, gameState, inventoryModel);
         } else if (loadCombinationWin.match(keyEvent)) {
@@ -238,29 +244,34 @@ public class Main extends Application {
         nextLevel("/level2.txt");
 
         if (map.getPlayer().getInventory().containsKey("KEY") && levelNumber.equals("1")) {
-            PopUp.display("Good job!", "DOOR 1 OPENED !", "Green");
+            FlashMessage.display("Good job", "DOOR 1 OPENED !");
             map.getPlayer().openDoor(map, 20, 19, CellType.OPENED_DOOR1, "KEY");
             map.getPlayer().removeItem("KEY");
             System.out.println(levelNumber);
         } else if (map.getPlayer().getInventory().containsKey("KEY_2") && levelNumber.equals("2")) {
-            PopUp.display("Good job!", "DOOR 2 OPENED !", "Green");
-            map.getPlayer().openDoor(map, 9, 1, CellType.OPENED_DOOR2, "KEY_2");
+            FlashMessage.display("Good job", "DOOR 2 OPENED !");
+            map.getPlayer().openDoor(map, 88, 18, CellType.OPENED_DOOR2, "KEY_2");
             map.getPlayer().removeItem("KEY_2");
             System.out.println(map.getPlayer().getInventory());
             System.out.println(levelNumber);
         } else if (map.getPlayer().getInventory().containsKey("KEY_3") && levelNumber.equals("2")) {
-            PopUp.display("Good job!", "DOOR 3 OPENED !", "Green");
-            map.getPlayer().openDoor(map, 0, 19, CellType.OPENED_DOOR3, "KEY_3");
+            FlashMessage.display("Good job", "DOOR 3 OPENED !");
+            map.getPlayer().openDoor(map, 8, 58, CellType.OPENED_DOOR3, "KEY_3");
             map.getPlayer().removeItem("KEY_3");
+            System.out.println(map.getPlayer().getInventory());
+            System.out.println(levelNumber);
+        } else if (map.getPlayer().getInventory().containsKey("KEY_4") && levelNumber.equals("2")) {
+            FlashMessage.display("Good job", "DOOR 4 OPENED !");
+            map.getPlayer().openDoor(map, 77, 74, CellType.OPENED_DOOR4, "KEY_4");
+            map.getPlayer().removeItem("KEY_4");
             System.out.println(map.getPlayer().getInventory());
             System.out.println(levelNumber);
         }
     }
 
     public void gameEnd() {
-        if (map.getPlayer().getCell().getX() == 0 && map.getPlayer().getCell().getY() == 19) {
-            if (map.getCell(0, 19).getType().equals(CellType.OPENED_DOOR3)) {
-                System.out.println("Test");
+        if (map.getPlayer().getCell().getX() == 77 && map.getPlayer().getCell().getY() == 74) {
+            if (map.getCell(77, 74).getType().equals(CellType.OPENED_DOOR4)) {
                 PopUp.display("Dungeon Crawl", "YOU WON!", "Green");
             }
             levelNumber = "1";
@@ -289,6 +300,7 @@ public class Main extends Application {
                 map.getPlayer().setName(name);
                 resize = true;
                 refresh();
+                FlashMessage.display("Felicitation", "You are in level 2 now!");
                 borderPane.setCenter(canvas);
                 primaryStage.sizeToScene();
                 context = canvas.getGraphicsContext2D();
@@ -322,15 +334,15 @@ public class Main extends Application {
         checkPlayerState();
         healthLabel.setText("" + map.getPlayer().getHealth());
 
-        Rectangle2D bounds= Screen.getPrimary().getVisualBounds();
-        int avWidth=(int)(bounds.getWidth()/1.5);
-        int avHeight=(int)(bounds.getHeight());
-        int canvasWidth=0;
-        int canvasHeight=0;
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        int avWidth = (int)(bounds.getWidth()/1.5);
+        int avHeight = (int)(bounds.getHeight());
+        int canvasWidth = 0;
+        int canvasHeight = 0;
 
 
         int startX=0, endX=0, startY=0, endY=0;
-        if (avWidth<=map.getWidth()*Tiles.TILE_WIDTH){
+        if (avWidth <= map.getWidth()*Tiles.TILE_WIDTH){
 
             canvasWidth = avWidth - avWidth % (2 * Tiles.TILE_WIDTH);
             canvasWidth = (canvasWidth + Tiles.TILE_WIDTH <= avWidth) ? canvasWidth + Tiles.TILE_WIDTH : canvasWidth - Tiles.TILE_WIDTH;
@@ -347,17 +359,17 @@ public class Main extends Application {
                 beforeWidth += beforeWidth - afterWidth;
 
             }
-            startX=playerX-beforeWidth;
-            endX=playerX+afterWidth;
+            startX = playerX-beforeWidth;
+            endX = playerX+afterWidth;
 
         }else{
-            canvasWidth=map.getWidth()*Tiles.TILE_WIDTH;
-            startX=0;
-            endX=map.getWidth()-1;
+            canvasWidth = map.getWidth()*Tiles.TILE_WIDTH;
+            startX = 0;
+            endX = map.getWidth()-1;
 
         }
 
-        if (avHeight<=map.getHeight()*Tiles.TILE_WIDTH) {
+        if (avHeight <= map.getHeight()*Tiles.TILE_WIDTH) {
 
             canvasHeight = avHeight - avHeight % (2 * Tiles.TILE_WIDTH);
             canvasHeight = (canvasHeight + Tiles.TILE_WIDTH <= avHeight) ? canvasHeight + Tiles.TILE_WIDTH : canvasHeight - Tiles.TILE_WIDTH;
@@ -376,9 +388,9 @@ public class Main extends Application {
             endY=playerY+afterHeight;
 
         } else{
-            canvasHeight=map.getHeight()*Tiles.TILE_WIDTH;
-            startY=0;
-            endY=map.getHeight()-1;
+            canvasHeight = map.getHeight()*Tiles.TILE_WIDTH;
+            startY = 0;
+            endY = map.getHeight()-1;
 
         }
 

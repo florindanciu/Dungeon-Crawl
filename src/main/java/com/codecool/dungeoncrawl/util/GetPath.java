@@ -9,8 +9,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class GetPath {
 
     public static String getPath(){

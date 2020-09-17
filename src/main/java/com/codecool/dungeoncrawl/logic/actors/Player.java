@@ -7,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.util.HashMap;
-import java.util.Set;
 
 public class Player extends Actor {
     public HashMap<String,Integer> inventory = new HashMap<>();
@@ -62,7 +61,8 @@ public class Player extends Actor {
                 map.getPlayer().getCell().getType().equals(CellType.HELMET) ||
                 map.getPlayer().getCell().getType().equals(CellType.CHEST) ||
                 map.getPlayer().getCell().getType().equals(CellType.KEY_2) ||
-                map.getPlayer().getCell().getType().equals(CellType.KEY_3)){
+                map.getPlayer().getCell().getType().equals(CellType.KEY_3) ||
+                map.getPlayer().getCell().getType().equals(CellType.KEY_4)) {
 
             getItemButton.setVisible(true);
             getItemButton.setOnAction(event -> {
@@ -78,12 +78,6 @@ public class Player extends Actor {
                         setArmor(map, "CHEST", 31, 0, 25);
                         getInventory().remove("CHEST");
                     }
-//                    Iterator it = getInventory().entrySet().iterator();
-//                    while (it.hasNext()) {
-//                        Map.Entry pair = (Map.Entry)it.next();
-//                        inventory.setText(inventory.getText() + pair.getKey() + " " + pair.getValue() + "\n");
-//                        it.remove(); // avoids a ConcurrentModificationException
-//                    }
                     inventory.setText(getInventory().toString());
                     map.getPlayer().getCell().setType(CellType.FLOOR);
                     getItemButton.setVisible(false);

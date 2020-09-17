@@ -13,9 +13,6 @@ import javafx.stage.Stage;
 
 public class Notification {
 
-    PlayerDao playerDao;
-
-
     public Notification(GameMap map, Label playerName) {
         Stage popupWindow=new Stage();
 

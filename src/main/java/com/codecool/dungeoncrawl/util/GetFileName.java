@@ -1,10 +1,5 @@
 package com.codecool.dungeoncrawl.util;
 
-import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
-import com.codecool.dungeoncrawl.dao.PlayerDao;
-import com.codecool.dungeoncrawl.logic.GameMap;
-import com.codecool.dungeoncrawl.model.GameState;
-import com.codecool.dungeoncrawl.model.PlayerModel;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,8 +9,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.List;
 
 public class GetFileName {
 
@@ -26,7 +19,9 @@ public class GetFileName {
         popupWindow.setTitle(null);
 
         Label label2 = new Label("Enter file name");
+        
         TextField fileName = new TextField();
+        fileName.setMaxWidth(150);
 
         Button button1= new Button("Submit");
         button1.setOnAction(e -> {

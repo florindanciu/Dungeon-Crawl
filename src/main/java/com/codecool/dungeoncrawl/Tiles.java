@@ -31,6 +31,7 @@ public class Tiles {
         tileMap.put("trees", new Tile(3, 1));
         tileMap.put("wall", new Tile(10, 17));
         tileMap.put("floor", new Tile(2, 0));
+        tileMap.put("white_floor", new Tile(1, 17));
         tileMap.put("player", new Tile(25, 0));
         tileMap.put("skeleton", new Tile(29, 6));
         tileMap.put("ghost", new Tile(27, 6));
@@ -40,9 +41,12 @@ public class Tiles {
         tileMap.put("opened_door2", new Tile(2, 9));
         tileMap.put("closed_door3", new Tile(5, 9));
         tileMap.put("opened_door3", new Tile(6, 9));
+        tileMap.put("closed_door4", new Tile(7, 10));
+        tileMap.put("opened_door4", new Tile(12, 11));
         tileMap.put("key", new Tile(16, 23));
         tileMap.put("key2", new Tile(17, 23));
         tileMap.put("key3", new Tile(18, 23));
+        tileMap.put("key4", new Tile(17, 25));
         tileMap.put("sword", new Tile(0, 29));
         tileMap.put("scorpion", new Tile(24, 5));
         tileMap.put("helmet", new Tile(3, 22));

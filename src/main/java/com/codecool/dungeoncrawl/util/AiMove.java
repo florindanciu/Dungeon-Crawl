@@ -1,14 +1,6 @@
 package com.codecool.dungeoncrawl.util;
 
-import com.codecool.dungeoncrawl.Main;
-import com.codecool.dungeoncrawl.Tiles;
-import com.codecool.dungeoncrawl.logic.Cell;
-import com.codecool.dungeoncrawl.logic.CellType;
-import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
-import com.codecool.dungeoncrawl.logic.actors.Ghost;
-import javafx.scene.canvas.GraphicsContext;
-
 import java.lang.*;
 
 public class AiMove extends Thread {

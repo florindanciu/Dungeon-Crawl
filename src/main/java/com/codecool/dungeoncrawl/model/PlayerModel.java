@@ -1,6 +1,7 @@
 package com.codecool.dungeoncrawl.model;
 
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PlayerModel extends BaseModel {
     private String playerName;
@@ -8,7 +9,7 @@ public class PlayerModel extends BaseModel {
     private int x;
     private int y;
 
-    public PlayerModel(String playerName, int x, int y) {
+    public PlayerModel(@JsonProperty("playerName") String playerName, @JsonProperty("x") int x,@JsonProperty("y") int y) {
         this.playerName = playerName;
         this.x = x;
         this.y = y;

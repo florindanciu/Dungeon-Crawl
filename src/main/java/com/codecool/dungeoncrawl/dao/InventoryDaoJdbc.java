@@ -30,7 +30,6 @@ public class InventoryDaoJdbc implements InventoryDao{
                 statement.setInt(2, inventoryModel.getInventoryItems().get(key));
                 statement.setInt(3, inventoryModel.getPlayer().getId());
                 statement.executeUpdate();
-                System.out.println("add inventory " + key);
                 ResultSet resultSet = statement.getGeneratedKeys();
                 resultSet.next();
                 inventoryModel.setId(resultSet.getInt(1));
@@ -44,11 +43,12 @@ public class InventoryDaoJdbc implements InventoryDao{
     public void update(InventoryModel inventoryModel) {
         try (Connection connection = dataSource.getConnection()) {
             for (String key : inventoryModel.getInventoryItems().keySet()) {
-                String sql = "UPDATE inventory SET item = ?, quantity = ?, player_id = ?";
+                String sql = "UPDATE inventory SET item = ?, quantity = ?, player_id = ? WHERE player_id = ?";
                 PreparedStatement statement = connection.prepareStatement(sql);
                 statement.setString(1, key);
                 statement.setInt(2, inventoryModel.getInventoryItems().get(key));
                 statement.setInt(3, inventoryModel.getPlayer().getId());
+                statement.setInt(4, inventoryModel.getPlayer().getId());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -59,7 +59,7 @@ public class InventoryDaoJdbc implements InventoryDao{
     @Override
     public InventoryModel get(int id) {
         try (Connection connection = dataSource.getConnection()) {
-            String sql = "SELECT item, quantity, player_id FROM inventory WHERE id = ?";
+            String sql = "SELECT item, quantity, player_id FROM inventory WHERE player_id = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();

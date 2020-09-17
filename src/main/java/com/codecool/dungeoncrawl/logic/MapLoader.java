@@ -37,6 +37,9 @@ public class MapLoader {
                         case '.':
                             cell.setType(CellType.FLOOR);
                             break;
+                        case '-':
+                            cell.setType(CellType.WHITE_FLOOR);
+                            break;
                         case 'b':
                             cell.setType(CellType.BRIDGE);
                             break;
@@ -56,6 +59,9 @@ public class MapLoader {
                         case '3':
                             cell.setType(CellType.CLOSED_DOOR3);
                             break;
+                        case '4':
+                            cell.setType(CellType.CLOSED_DOOR4);
+                            break;
                         case 'k':
                             cell.setType(CellType.KEY);
                             break;
@@ -64,6 +70,9 @@ public class MapLoader {
                             break;
                         case '&':
                             cell.setType(CellType.KEY_3);
+                            break;
+                        case '$':
+                            cell.setType(CellType.KEY_4);
                             break;
                         case 'z':
                             cell.setType(CellType.SWORD);

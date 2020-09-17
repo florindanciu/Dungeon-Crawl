@@ -8,9 +8,9 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class GameDatabaseManager {
     private PlayerDao playerDao;
@@ -38,7 +38,7 @@ public class GameDatabaseManager {
 
     public void savePlayer(Player player) {
         PlayerModel model = new PlayerModel(player);
-        playerDao.getAll().forEach(playerModel -> {
+        getPlayers().forEach(playerModel -> {
             if (playerModel.getPlayerName().equals(player.getName())){
                 model.setId(playerModel.getId());
             }
@@ -52,31 +52,31 @@ public class GameDatabaseManager {
     }
 
     public void saveGameState(GameState gameState) {
-//        AtomicReference<Integer> id = new AtomicReference<>();
         GameState newState = new GameState(gameState.getCurrentMap(), gameState.getSavedAt(), gameState.getPlayer());
-        playerDao.getAll().forEach(playerModel -> {
+        getPlayers().forEach(playerModel -> {
             if (playerModel.getPlayerName().equals(gameState.getPlayer().getPlayerName())){
-//                id.set(playerModel.getId());
                 newState.getPlayer().setId(playerModel.getId());
             }
         });
         if (gameStateDao.getAll().stream().anyMatch(state -> state.getPlayer().getId().equals(newState.getPlayer().getId()))) {
             gameStateDao.update(newState);
-            System.out.println("update");
         } else {
             gameStateDao.add(newState);
-            System.out.println("add");
         }
     }
 
     public void saveInventory(InventoryModel inventoryModel) {
+        System.out.println(inventoryModel.getPlayer().getPlayerName());
+        if (inventoryModel.getInventoryItems().isEmpty()) {
+            inventoryModel.getInventoryItems().put("None", 0);
+        }
         InventoryModel newInventoryModel = new InventoryModel(inventoryModel.getInventoryItems(), inventoryModel.getPlayer());
-        playerDao.getAll().forEach(playerModel -> {
+        getPlayers().forEach(playerModel -> {
             if (playerModel.getPlayerName().equals(inventoryModel.getPlayer().getPlayerName())) {
-                newInventoryModel.setId(playerModel.getId());
+                newInventoryModel.getPlayer().setId(playerModel.getId());
             }
         });
-        if (inventoryModel.getId() != null) {
+        if (inventoryDao.getAll().stream().anyMatch(item -> item.getPlayer().getId().equals(newInventoryModel.getPlayer().getId()))) {
             inventoryDao.update(newInventoryModel);
         } else {
             inventoryDao.add(newInventoryModel);
@@ -85,7 +85,7 @@ public class GameDatabaseManager {
 
     public boolean checkPlayerDb(Player player) {
         AtomicBoolean playerDB = new AtomicBoolean(false);
-        playerDao.getAll().forEach(playerModel -> {
+        getPlayers().forEach(playerModel -> {
             if (playerModel.getPlayerName().equals(player.getName())) {
                 playerDB.set(true);
             }
@@ -96,8 +96,8 @@ public class GameDatabaseManager {
     private DataSource connect() throws SQLException {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         String dbName = "dungeon_crawl";
-        String user = "gabi";
-        String password = "123";
+        String user = "florin";
+        String password = "1234";
         dataSource.setDatabaseName(dbName);
         dataSource.setUser(user);
         dataSource.setPassword(password);
@@ -108,6 +108,4 @@ public class GameDatabaseManager {
 
         return dataSource;
     }
-
-
 }
