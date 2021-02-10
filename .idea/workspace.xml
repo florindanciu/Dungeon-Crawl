@@ -22,15 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45401452-e721-48e0-a343-85bca89894ff" name="Default Changelist" comment="Merge branch 'development' of https://github.com/CodecoolGlobal/dungeon-crawl-1-java-VGabriel45 into development&#10;&#10;# Conflicts:&#10;#&#9;src/main/java/com/codecool/dungeoncrawl/Main.java&#10;#&#9;target/classes/com/codecool/dungeoncrawl/Main$1.class&#10;#&#9;target/classes/com/codecool/dungeoncrawl/Main.class&#10;#&#9;target/classes/com/codecool/dungeoncrawl/dao/GameDatabaseManager.class">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_mac_11_0_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_linux_11_0_2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_mac_12_0_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_linux_12_0_2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_mac_12_0_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_linux_12_0_2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_media_mac_11_0_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_media_linux_11_0_2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dungeon-crawl.iml" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon-crawl.iml" afterDir="false" />
-    </list>
+    <list default="true" id="45401452-e721-48e0-a343-85bca89894ff" name="Default Changelist" comment="Merge branch 'development' of https://github.com/CodecoolGlobal/dungeon-crawl-1-java-VGabriel45 into development&#10;&#10;# Conflicts:&#10;#&#9;src/main/java/com/codecool/dungeoncrawl/Main.java&#10;#&#9;target/classes/com/codecool/dungeoncrawl/Main$1.class&#10;#&#9;target/classes/com/codecool/dungeoncrawl/Main.class&#10;#&#9;target/classes/com/codecool/dungeoncrawl/dao/GameDatabaseManager.class" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -99,13 +91,15 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
         <value>
           <option name="containerStateName" value="" />
         </value>
       </option>
-      <option name="TEST_OBJECT" value="class" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -144,6 +138,7 @@
       <updated>1600337371644</updated>
       <workItem from="1600337374530" duration="14281000" />
       <workItem from="1612943875622" duration="822000" />
+      <workItem from="1612945746486" duration="22000" />
     </task>
     <servers />
   </component>
